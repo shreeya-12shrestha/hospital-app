@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap');
+:root {
+    --bg: #F7FAF9;
+    --card: #FFFFFF;
+    --ink: #0E2A26;
+    --muted: #5B6E6A;
+    --primary: #0E7C6B;
+    --primary-soft: #DFF1EC;
+    --line: #D9E5E1;
+    --track: #E8F0EE;
+    --ok: #15803D;
+    --ok-soft: #DCFCE7;
+    --warn: #B45309;
+    --warn-soft: #FEF3C7;
+    --crit: #B91C1C;
+    --crit-soft: #FEE2E2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Public Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(247, 250, 249, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+.logo {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    gap: 22px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+.hero {
+    padding: 56px 0 8px;
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+}
+
+.eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.1;
+    margin: 14px 0 10px;
+}
+
+.sub {
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 560px;
+    margin: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    padding: 36px 0 72px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(14, 42, 38, 0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    animation: rise 0.5s ease backwards;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(14, 42, 38, 0.08);
+}
+
+.card h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 19px;
+    margin: 0 0 6px;
+}
+
+.meta {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 2px 0;
+}
+
+.capacity {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+}
+
+.cap-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.cap-num {
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.bar {
+    height: 6px;
+    background: var(--track);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.bar i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+}
+
+.bar i.ok {
+    background: var(--ok);
+}
+
+.bar i.warn {
+    background: var(--warn);
+}
+
+.bar i.crit {
+    background: var(--crit);
+}
+
+.chip {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+}
+
+.chip.ok {
+    color: var(--ok);
+    background: var(--ok-soft);
+}
+
+.chip.warn {
+    color: var(--warn);
+    background: var(--warn-soft);
+}
+
+.chip.crit {
+    color: var(--crit);
+    background: var(--crit-soft);
+}
+
+.status {
+    padding: 40px 0;
+    color: var(--muted);
+}
+
+.notice {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    color: var(--muted);
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        animation: none;
+        transition: none;
+    }
+}

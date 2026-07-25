@@ -9,12 +9,21 @@ import joblib
 import pandas as pd
 from .models import Hospital
 from .serializers import HospitalSerializer
-
+from .models import Hospital, Service, Doctor, Appointment
+from .serializers import HospitalSerializer, HospitalDetailSerializer, AppointmentSerializer
 # --- Hospital list (already working) ---
 class HospitalListView(generics.ListAPIView):
     queryset = Hospital.objects.all()
     serializer_class = HospitalSerializer
 
+class HospitalDetailView(generics.RetrieveAPIView):
+    queryset = Hospital.objects.all()
+    serializer_class = HospitalDetailSerializer
+
+
+class AppointmentCreateView(generics.CreateAPIView):
+    queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
 # --- Symptom checker: load the trained model once at startup ---
 ML_DIR = settings.BASE_DIR / 'ml'
 model = joblib.load(ML_DIR / 'disease_model.pkl')

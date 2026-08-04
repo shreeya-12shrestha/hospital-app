@@ -3,18 +3,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.conf import settings
 import os
+import json
 from dotenv import load_dotenv
 from google import genai
 import joblib
 import pandas as pd
-from .models import Hospital
-from .serializers import HospitalSerializer
 from .models import Hospital, Service, Doctor, Appointment
-import os
-import json
-from dotenv import load_dotenv
-from google import genai
 from .serializers import HospitalSerializer, HospitalDetailSerializer, AppointmentSerializer, DoctorSerializer
+
 load_dotenv()
 gemini = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -107,8 +103,7 @@ def extract_symptoms_with_gemini(text, lang):
     except Exception:
         # Gemini failed or returned non-JSON — fall back to ML-only, no reply
         return [], None
-load_dotenv()
-gemini = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
 
 @api_view(['POST'])
 def chat(request):

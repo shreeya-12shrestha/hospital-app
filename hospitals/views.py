@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.conf import settings
+from django.db import models
 import os
 import json
 from dotenv import load_dotenv
@@ -15,8 +16,33 @@ load_dotenv()
 gemini = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 class HospitalListView(generics.ListAPIView):
-    queryset = Hospital.objects.all()
     serializer_class = HospitalSerializer
+
+    def get_queryset(self):
+        qs = Hospital.objects.all()
+        # ?search=janatapriya  (name or address)
+        search = self.request.query_params.get('search')
+        if search:
+            qs = qs.filter(
+                models.Q(name__icontains=search) | models.Q(address__icontains=search)
+            )
+        # ?city=Pokhara
+        city = self.request.query_params.get('city')
+        if city:
+            qs = qs.filter(city__iexact=city)
+        # ?promoted=true
+        promoted = self.request.query_params.get('promoted')
+        if promoted == 'true':
+            qs = qs.filter(is_promoted=True)
+        # ?sort=rating (default: name)
+        sort = self.request.query_params.get('sort', 'name')
+        if sort == 'rating':
+            qs = qs.order_by('-rating')
+        elif sort == 'beds':
+            qs = qs.order_by('-available_beds')
+        else:
+            qs = qs.order_by('name')
+        return qs
 
 class HospitalDetailView(generics.RetrieveAPIView):
     queryset = Hospital.objects.all()
@@ -26,10 +52,15 @@ class DoctorListView(generics.ListAPIView):
 
     def get_queryset(self):
         qs = Doctor.objects.select_related('hospital').all()
-        # optional ?hospital=<id> filter, used by the detail page's doctors section
         hospital_id = self.request.query_params.get('hospital')
         if hospital_id:
             qs = qs.filter(hospital_id=hospital_id)
+        specialty = self.request.query_params.get('specialty')
+        if specialty:
+            qs = qs.filter(specialty__icontains=specialty)
+        search = self.request.query_params.get('search')
+        if search:
+            qs = qs.filter(name__icontains=search)
         return qs
 
 class AppointmentCreateView(generics.CreateAPIView):

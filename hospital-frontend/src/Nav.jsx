@@ -25,7 +25,7 @@ export default function Nav() {
 
   const links = [
     { to: '/', label: t('nav.home'), active: true },
-    { to: '/', label: t('nav.hospitals') },
+    { to: '/hospitals', label: t('nav.hospitals') },
     { to: '/symptom-check', label: t('nav.symptoms') },
     { to: '/doctors', label: t('nav.doctors') },
     { to: '/about', label: t('nav.about') },

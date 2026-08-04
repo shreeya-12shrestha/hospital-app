@@ -1,251 +1,105 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
-import { HospitalArt, DoctorArt, HospitalCtaArt } from './Art'
+import { HospitalArt } from './Art'
+import { useHospitals, normalizeHospital, Hexbrow } from './lib'
 
-const Pennant = ({ blue }) => (
-  <svg className={`pennant${blue ? ' pennant--blue' : ''}`} viewBox="0 0 13 17" aria-hidden="true">
-    <path d="M0 0h13L4.5 7H13L0 17z" />
-  </svg>
-)
-
-export default function Home() {
+export default function HospitalDetail() {
   const { t } = useApp()
-  const [hospitals, setHospitals] = useState(null)   // null = still loading
-  const railRef = useRef(null)
+  const { id } = useParams()
+  const { data, loading } = useHospitals()
 
-  useEffect(() => {
-    let alive = true
-    fetch('/api/hospitals/')
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((data) => {
-        // DRF may return a bare array or a paginated { results: [] }
-        const list = Array.isArray(data) ? data : data.results ?? []
-        if (alive) setHospitals(list)
-      })
-      .catch(() => alive && setHospitals([]))   // API down → fall back to the demo cards
-    return () => { alive = false }
-  }, [])
+  const hospital = useMemo(() => {
+    if (!data) return null
+    return data.map(normalizeHospital).find((h) => String(h.id) === String(id)) ?? null
+  }, [data, id])
 
-  // Until the DB has rows, show the five designed placeholder cards.
-  const demo = [1, 2, 3, 4, 5].map((n) => ({
-    id: `demo-${n}`,
-    name: t(`h${n}.name`),
-    location: t(`h${n}.loc`),
-    rating: ['4.8', '4.6', '4.7', '4.5', '4.4'][n - 1],
-    reviews: ['312', '198', '864', '1,204', '503'][n - 1],
-    tag: t(n === 4 ? 'tag.gov' : n === 5 ? 'tag.cardio' : 'tag.multi'),
-    gov: n === 4,
-    demo: true,
-  }))
-
-  const cards = hospitals && hospitals.length ? hospitals : demo
-
-  const scrollRail = (dir) => {
-    const rail = railRef.current
-    const card = rail?.querySelector('.hosp')
-    rail?.scrollBy({ left: dir * ((card?.offsetWidth ?? 292) + 22), behavior: 'smooth' })
+  if (loading) {
+    return <main className="page"><div className="wrap"><p className="results-count">{t('hosp.loading')}</p></div></main>
   }
 
-  return (
-    <main id="top">
-      {/* ============================ PROMOTED HOSPITALS ============================ */}
-      <section className="promo" id="hospitals">
+  if (!hospital) {
+    return (
+      <main className="page">
         <div className="wrap">
-          <div className="promo__head">
-            <div>
-              <p className="eyebrow"><Pennant />{t('promo.eyebrow')}</p>
-              <h2 className="h2">{t('promo.title')}</h2>
-              <p className="lede">{t('promo.sub')}</p>
-            </div>
-            <Link className="promo__viewall" to="/hospitals">
-              {t('promo.viewall')} <Icon n="arrow" />
+          <Link className="det__back" to="/hospitals"><Icon n="left" /> {t('det.back')}</Link>
+          <div className="empty"><p>{t('det.notfound')}</p></div>
+        </div>
+      </main>
+    )
+  }
+
+  const h = hospital
+  const services = ['det.svc1', 'det.svc2', 'det.svc3', 'det.svc4', 'det.svc5', 'det.svc6']
+  const serviceIcons = ['bolt', 'heart', 'file', 'users', 'shield', 'steth']
+  const bedsTotal = h.beds ?? 42
+  const bedsPct = Math.min(100, Math.round((bedsTotal / 120) * 100))
+
+  return (
+    <main className="page">
+      <div className="wrap">
+        <Link className="det__back" to="/hospitals"><Icon n="left" /> {t('det.back')}</Link>
+
+        <div className="det__hero">
+          <div className="det__media"><HospitalArt i={Number(id) % 5} /></div>
+          <div className="det__intro">
+            <span className={`tag${h.gov ? ' tag--gov' : ''}`}>{h.specialty ?? t('tag.multi')}</span>
+            <h1 className="page__title">{h.name}</h1>
+            <p className="hosp__loc det__loc"><Icon n="pin" /><span>{h.location}</span></p>
+            {h.rating != null && (
+              <p className="det__rate">
+                <Icon n="star" /><b>{h.rating}</b>
+                {h.reviews ? <span>{h.reviews} {t('det.reviews')}</span> : null}
+              </p>
+            )}
+            <Link className="btn btn--red" to={`/appointments?hospital=${h.id}`}>
+              <Icon n="cal" /> {t('det.book')}
             </Link>
           </div>
-
-          <div className="rail-shell">
-            <div className="rail-nav">
-              <button className="rail-btn" aria-label={t('a11y.prev')} onClick={() => scrollRail(-1)}>
-                <Icon n="left" />
-              </button>
-              <button className="rail-btn" aria-label={t('a11y.next')} onClick={() => scrollRail(1)}>
-                <Icon n="right" />
-              </button>
-            </div>
-
-            <div className="rail" ref={railRef} tabIndex={0} aria-label={t('promo.title')}>
-              {cards.map((h, i) => (
-                <article className="hosp" key={h.id ?? i}>
-                  <div className="hosp__media"><HospitalArt i={i} /></div>
-                  <span className="hosp__badge">{t('promo.badge')}</span>
-                  <div className="hosp__body">
-                    <h3 className="hosp__name">{h.name}</h3>
-                    <p className="hosp__loc">
-                      <Icon n="pin" />
-                      <span>{h.location ?? h.address ?? ''}</span>
-                    </p>
-                    <div className="hosp__foot">
-                      <span className="rate">
-                        <Icon n="star" />
-                        <b>{h.rating ?? '—'}</b>
-                        {h.reviews ? <span>({h.reviews})</span> : null}
-                      </span>
-                      <span className={`tag${h.gov ? ' tag--gov' : ''}`}>
-                        {h.tag ?? h.specialty ?? (h.beds ? `${h.beds} beds` : t('tag.multi'))}
-                      </span>
-                    </div>
-                    {!h.demo && (
-                      <Link className="hosp__link" to={`/hospitals/${h.id}`}>
-                        {t('promo.viewall')} <Icon n="arrow" />
-                      </Link>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
         </div>
-      </section>
 
-      {/* ==================================== HERO ==================================== */}
-      <section className="hero">
-        <div className="wrap hero__in">
-          <div>
-            <p className="eyebrow"><Pennant blue />{t('hero.eyebrow')}</p>
-            <h1 dangerouslySetInnerHTML={{ __html: t('hero.title') }} />
-            <p>{t('hero.body')}</p>
-            <div className="hero__cta">
-              <Link className="btn btn--red" to="/symptom-check">
-                <Icon n="steth" /> {t('hero.cta1')}
-              </Link>
-              <a className="btn btn--ghost" href="#hospitals">
-                <Icon n="hospital" /> {t('hero.cta2')}
-              </a>
-            </div>
-            <p className="hero__note"><Icon n="check" /> {t('hero.note')}</p>
+        <div className="det__grid">
+          <div className="det__main">
+            <section className="det__block">
+              <p className="eyebrow"><Hexbrow />{t('det.about')}</p>
+              <p className="det__body">{h.description ?? t('det.aboutBody')}</p>
+            </section>
+
+            <section className="det__block">
+              <p className="eyebrow"><Hexbrow />{t('det.services')}</p>
+              <div className="det__chips">
+                {services.map((k, i) => (
+                  <span className="det__chip" key={k}>
+                    <Icon n={serviceIcons[i]} /> {t(k)}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            <section className="det__block">
+              <p className="eyebrow"><Hexbrow />{t('det.beds')}</p>
+              <div className="beds">
+                <div className="beds__bar"><span style={{ width: `${bedsPct}%` }} /></div>
+                <p className="beds__label"><b>{bedsTotal}</b> {t('det.bedsAvail')}</p>
+              </div>
+            </section>
           </div>
 
-          <div className="stage">
-            <span className="blob blob--a" />
-            <span className="blob blob--b" />
-            <span className="blob blob--c" />
-            <DoctorArt />
-
-            <div className="float float--1">
-              <i><Icon n="spark" /></i>
-              <span>{t('float.1a')}<small>{t('float.1b')}</small></span>
+          <aside className="det__side">
+            <div className="det__card">
+              <p className="eyebrow"><Hexbrow blue />{t('det.contact')}</p>
+              <p className="det__contact"><Icon n="pin" /><span>{h.location}</span></p>
+              {h.phone && <p className="det__contact"><Icon n="steth" /><span>{h.phone}</span></p>}
+              <p className="det__contact"><Icon n="clock" /><span>{t('det.hours')}</span></p>
+              <div className="det__map" role="img" aria-label={t('det.map')}>
+                <Icon n="pin" />
+                <span>{t('det.map')}</span>
+              </div>
             </div>
-            <div className="float float--2">
-              <i><Icon n="shield" /></i>
-              <span>{t('float.2a')}<small>{t('float.2b')}</small></span>
-            </div>
-            <div className="float float--3">
-              <i><Icon n="cal" /></i>
-              <span>{t('float.3a')}<small>{t('float.3b')}</small></span>
-            </div>
-          </div>
+          </aside>
         </div>
-      </section>
-
-      {/* ================================ TRUST STRIP ================================ */}
-      <section className="trust section--tight" id="about">
-        <div className="wrap trust__grid">
-          {[
-            ['shield', 'trust.1a', 'trust.1b'],
-            ['spark', 'trust.2a', 'trust.2b'],
-            ['bolt', 'trust.3a', 'trust.3b'],
-            ['lock', 'trust.4a', 'trust.4b'],
-          ].map(([icon, a, b]) => (
-            <div className="trust-card" key={a}>
-              <i><Icon n={icon} /></i>
-              <h3>{t(a)}</h3>
-              <p>{t(b)}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================================== SERVICES ================================== */}
-      <section className="section" id="services">
-        <div className="wrap">
-          <div className="svc__head">
-            <div>
-              <p className="eyebrow"><Pennant />{t('svc.eyebrow')}</p>
-              <h2 className="h2">{t('svc.title')}</h2>
-              <p className="lede">{t('svc.sub')}</p>
-            </div>
-            <a className="btn btn--ghost" href="#services">
-              {t('svc.explore')} <Icon n="arrow" />
-            </a>
-          </div>
-
-          <div className="svc__grid">
-            {[
-              ['steth', 'svc.1a', 'svc.1b', '/symptom-check'],
-              ['hospital', 'svc.2a', 'svc.2b', '/hospitals'],
-              ['cal', 'svc.3a', 'svc.3b', '/appointments'],
-              ['file', 'svc.4a', 'svc.4b', '/records'],
-            ].map(([icon, a, b, to]) => (
-              <Link className="svc-card" to={to} key={a}>
-                <i><Icon n={icon} /></i>
-                <div>
-                  <h3>{t(a)}</h3>
-                  <p>{t(b)}</p>
-                </div>
-                <span className="svc-card__go"><Icon n="arrow" /></span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =================================== STATS =================================== */}
-      <section className="stats section--tight" id="doctors">
-        <div className="wrap stats__grid">
-          {[
-            ['hospital', 'stat.1n', 'stat.1a'],
-            ['users', 'stat.2n', 'stat.2a'],
-            ['heart', 'stat.3n', 'stat.3a'],
-            ['clock', 'stat.4n', 'stat.4a'],
-          ].map(([icon, n, label]) => (
-            <div className="stat" key={n}>
-              <i><Icon n={icon} /></i>
-              <b>{t(n)}</b>
-              <span>{t(label)}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================================= FINAL CTA ================================= */}
-      <section className="final" id="contact">
-        <div className="wrap">
-          <div className="final__card">
-            <HospitalCtaArt />
-            <div>
-              <p className="eyebrow"><Pennant blue />{t('final.eyebrow')}</p>
-              <h2>{t('final.title')}</h2>
-              <p>{t('final.body')}</p>
-              <Link className="btn btn--red" to="/symptom-check">
-                {t('final.cta')} <Icon n="arrow" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="foot">
-        <div className="wrap foot__in">
-          <span>{t('foot.copy')}</span>
-          <nav aria-label="Footer">
-            <a href="#about">{t('foot.about')}</a>
-            <a href="#">{t('foot.privacy')}</a>
-            <a href="#">{t('foot.terms')}</a>
-            <a href="#contact">{t('foot.contact')}</a>
-          </nav>
-        </div>
-      </footer>
+      </div>
     </main>
   )
 }

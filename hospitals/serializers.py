@@ -32,3 +32,10 @@ class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
         fields = '__all__'
+class DoctorSerializer(serializers.ModelSerializer):
+    # pull the hospital's name in, so the frontend can show "at <hospital>"
+    hospital_name = serializers.CharField(source='hospital.name', read_only=True)
+
+    class Meta:
+        model = Doctor
+        fields = ['id', 'name', 'specialty', 'available_days', 'hospital', 'hospital_name']

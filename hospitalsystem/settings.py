@@ -25,10 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yk#r0*7s&h8-r5g)0vxqlzck9n8&$_#db2e6jf210s(i_&7ba_'
-
-# SECURITY WARNING: don't run with debug turned on in production!
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-dev-fallback-key-change-in-production")
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -44,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hospitals',
+    'corsheaders',
     'rest_framework',
 ]
 
@@ -107,13 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kathmandu'
 
 USE_I18N = True
 

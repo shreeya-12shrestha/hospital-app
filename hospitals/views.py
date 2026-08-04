@@ -42,9 +42,7 @@ symptom_list = joblib.load(ML_DIR / 'symptoms.pkl')
 
 @api_view(['POST'])
 def symptom_check(request):
-    # Accept both shapes:
-    #   new free-text page  -> {"symptoms": "I have fever and headache", "lang": "ne"}
-    #   old checkbox client -> {"symptoms": ["fever", "headache"]}
+
     raw = request.data.get('symptoms', '')
     lang = request.data.get('lang', 'en')
 
@@ -101,7 +99,6 @@ def extract_symptoms_with_gemini(text, lang):
         data = json.loads(cleaned)
         return data.get('symptoms', []), data.get('reply', '')
     except Exception:
-        # Gemini failed or returned non-JSON — fall back to ML-only, no reply
         return [], None
 
 
@@ -109,9 +106,15 @@ def extract_symptoms_with_gemini(text, lang):
 def chat(request):
     message = request.data.get('message', '')
     if not message:
-        return Response({'error': 'Please send a message.'})
-    response = gemini.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=message
-    )
-    return Response({'reply': response.text})
+        return Response({'error': 'Please send a message.'}, status=400)
+    try:
+        response = gemini.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=message,
+        )
+        return Response({'reply': response.text})
+    except Exception:
+        return Response(
+            {'error': 'AI service is temporarily unavailable. Please try again.'},
+            status=503,
+        )

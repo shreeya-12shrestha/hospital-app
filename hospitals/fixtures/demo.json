@@ -1,0 +1,48 @@
+[
+{
+  "model": "hospitals.hospital",
+  "pk": 1,
+  "fields": {
+    "name": "Janatapriya Health Care",
+    "address": "Simalchaur-1, Pokhara",
+    "city": "",
+    "phone": "061-000000",
+    "description": "",
+    "total_beds": 30,
+    "available_beds": 15,
+    "rating": "0.0",
+    "image": "",
+    "latitude": null,
+    "longitude": null,
+    "is_promoted": false
+  }
+},
+{
+  "model": "hospitals.hospital",
+  "pk": 2,
+  "fields": {
+    "name": "Shreeya Hospital",
+    "address": "Shitaladevi-12, Pokhara",
+    "city": "",
+    "phone": "061-000000",
+    "description": "",
+    "total_beds": 40,
+    "available_beds": 12,
+    "rating": "0.0",
+    "image": "",
+    "latitude": null,
+    "longitude": null,
+    "is_promoted": false
+  }
+},
+{
+  "model": "hospitals.doctor",
+  "pk": 1,
+  "fields": {
+    "hospital": 1,
+    "name": "Suyasa Sigdel",
+    "specialty": "Pediatrician",
+    "available_days": "Sunday-Friday"
+  }
+}
+]

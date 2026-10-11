@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
 import { HospitalArt } from './Art'
-import { useHospitals, normalizeHospital, Hexbrow } from './lib'
+import { useHospitals, normalizeHospital, Hexbrow } from './Lib'
 
 // When the API has no rows yet, fall back to the five designed demo hospitals
 // so the page never looks broken while the backend is still being filled.

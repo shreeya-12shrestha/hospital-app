@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
-import { Hexbrow } from './lib'
+import { Hexbrow } from './Lib'
 
 // Fixed time slots the user picks from — stored as text in the model.
 const SLOTS = [

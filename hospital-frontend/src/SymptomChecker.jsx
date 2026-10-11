@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
-import { Hexbrow } from './lib'
+import { Hexbrow } from './Lib'
 
 const SR = typeof window !== 'undefined'
   ? window.SpeechRecognition || window.webkitSpeechRecognition

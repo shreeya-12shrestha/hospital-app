@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
-import { Hexbrow } from './lib'
+import { Hexbrow } from './Lib'
 
 const DEMO = [
   { id: 'd1', name: 'Anjana Sharma', specKey: 'det.svc2', hospKey: 'h3.name', days: 'Sun–Fri' },

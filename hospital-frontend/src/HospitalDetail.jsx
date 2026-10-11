@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
 import { HospitalArt } from './Art'
-import { useHospitals, normalizeHospital, Hexbrow } from './lib'
+import { useHospitals, normalizeHospital, Hexbrow } from './Lib'
 
 export default function HospitalDetail() {
   const { t } = useApp()

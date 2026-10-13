@@ -1,19 +1,30 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
 import { HospitalArt } from './Art'
-import { useHospitals, normalizeHospital, Hexbrow } from './Lib'
+import { normalizeHospital, Hexbrow } from './Lib'
 
 export default function HospitalDetail() {
   const { t } = useApp()
   const { id } = useParams()
-  const { data, loading } = useHospitals()
+  const [raw, setRaw] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const hospital = useMemo(() => {
-    if (!data) return null
-    return data.map(normalizeHospital).find((h) => String(h.id) === String(id)) ?? null
-  }, [data, id])
+  useEffect(() => {
+    let alive = true
+    fetch(`/api/hospitals/${id}/`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((json) => {
+        if (alive) { setRaw(json); setLoading(false) }
+      })
+      .catch(() => {
+        if (alive) { setRaw(null); setLoading(false) }
+      })
+    return () => { alive = false }
+  }, [id])
+
+  const hospital = raw ? normalizeHospital(raw) : null
 
   if (loading) {
     return <main className="page"><div className="wrap"><p className="results-count">{t('hosp.loading')}</p></div></main>

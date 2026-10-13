@@ -73,7 +73,7 @@ export default function HospitalDetail() {
           <div className="det__main">
             <section className="det__block">
               <p className="eyebrow"><Hexbrow />{t('det.about')}</p>
-              <p className="det__body">{h.description ?? t('det.aboutBody')}</p>
+              <p className="det__body">{h.description || t('det.aboutBody')}</p>
             </section>
 
                    {raw.services.length > 0 && (

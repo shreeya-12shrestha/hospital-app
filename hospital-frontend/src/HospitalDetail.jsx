@@ -42,8 +42,9 @@ export default function HospitalDetail() {
   }
 
   const h = hospital
-  const bedsTotal = h.beds ?? 42
-  const bedsPct = Math.min(100, Math.round((bedsTotal / 120) * 100))
+  const bedsAvail = h.beds ?? 0
+  const bedsTotal = raw.total_beds || 1
+  const bedsPct = Math.min(100, Math.round((bedsAvail / bedsTotal) * 100))
 
   return (
     <main className="page">
@@ -92,7 +93,7 @@ export default function HospitalDetail() {
               <p className="eyebrow"><Hexbrow />{t('det.beds')}</p>
               <div className="beds">
                 <div className="beds__bar"><span style={{ width: `${bedsPct}%` }} /></div>
-                <p className="beds__label"><b>{bedsTotal}</b> {t('det.bedsAvail')}</p>
+                <p className="beds__label"><b>{bedsAvail}</b> / {bedsTotal} {t('det.bedsAvail')}</p>
               </div>
             </section>
           </div>

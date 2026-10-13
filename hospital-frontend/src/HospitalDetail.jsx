@@ -42,8 +42,6 @@ export default function HospitalDetail() {
   }
 
   const h = hospital
-  const services = ['det.svc1', 'det.svc2', 'det.svc3', 'det.svc4', 'det.svc5', 'det.svc6']
-  const serviceIcons = ['bolt', 'heart', 'file', 'users', 'shield', 'steth']
   const bedsTotal = h.beds ?? 42
   const bedsPct = Math.min(100, Math.round((bedsTotal / 120) * 100))
 
@@ -77,16 +75,18 @@ export default function HospitalDetail() {
               <p className="det__body">{h.description ?? t('det.aboutBody')}</p>
             </section>
 
-            <section className="det__block">
-              <p className="eyebrow"><Hexbrow />{t('det.services')}</p>
-              <div className="det__chips">
-                {services.map((k, i) => (
-                  <span className="det__chip" key={k}>
-                    <Icon n={serviceIcons[i]} /> {t(k)}
-                  </span>
-                ))}
-              </div>
-            </section>
+                   {raw.services.length > 0 && (
+              <section className="det__block">
+                <p className="eyebrow"><Hexbrow />{t('det.services')}</p>
+                <div className="det__chips">
+                  {raw.services.map((s) => (
+                    <span className="det__chip" key={s.id}>
+                      <Icon n="steth" /> {s.name}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <section className="det__block">
               <p className="eyebrow"><Hexbrow />{t('det.beds')}</p>

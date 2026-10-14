@@ -2605,3 +2605,196 @@ html[lang="ne"] .hero h1 {
         justify-content: center
     }
 }
+
+/* ---- appointment booking form ---- */
+
+.appt-form {
+    display: grid;
+    gap: 20px;
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sh-1)
+}
+
+.field {
+    display: grid;
+    gap: 8px
+}
+
+.field__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink)
+}
+
+.field__label em {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--muted)
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 13px 16px;
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    outline: 0;
+    transition: border-color .16s ease, box-shadow .16s ease
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: var(--muted);
+    opacity: .75
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-tint)
+}
+
+.field input,
+.field select {
+    height: 50px
+}
+
+.field textarea {
+    resize: vertical;
+    line-height: 1.6;
+    min-height: 96px
+}
+
+.field select {
+    padding-right: 40px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B6A88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center
+}
+
+/* lets the browser draw the date picker and dropdown in dark colours */
+[data-theme="dark"] .field input,
+[data-theme="dark"] .field select {
+    color-scheme: dark
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px
+}
+
+.appt-error {
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--red);
+    background: var(--red-tint);
+    border-radius: 12px
+}
+
+.appt-submit {
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px
+}
+
+.appt-submit:disabled {
+    opacity: .6;
+    cursor: wait
+}
+
+/* ---- booking confirmed screen ---- */
+
+.appt-done {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 48px 28px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg)
+}
+
+.appt-done__tick {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    color: var(--blue);
+    background: var(--blue-tint)
+}
+
+.appt-done__tick svg {
+    width: 30px;
+    height: 30px
+}
+
+.appt-done__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 18px
+}
+
+@media (max-width: 560px) {
+    .appt-form {
+        padding: 20px
+    }
+
+    .field-row {
+        grid-template-columns: 1fr
+    }
+}
+
+.appt-avail {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blue);
+    background: var(--blue-tint);
+    border-radius: 100px
+}
+
+.appt-avail svg {
+    width: 16px;
+    height: 16px
+}
+
+.appt-avail {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blue);
+    background: var(--blue-tint);
+    border-radius: 100px
+}
+
+.appt-avail svg {
+    width: 16px;
+    height: 16px
+}

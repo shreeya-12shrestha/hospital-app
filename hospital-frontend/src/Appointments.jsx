@@ -17,7 +17,7 @@ export default function Appointments() {
   const hospitalParam = params.get('hospital')
 
   // context we display + the hospital id we must send
-  const [ctx, setCtx] = useState({ doctorName: '', hospitalName: '', hospitalId: hospitalParam || '' })
+  const [ctx, setCtx] = useState({ doctorName: '', doctorDays: '', doctorStart: '', doctorEnd: '', hospitalName: '', hospitalId: hospitalParam || '' })
 
   const [form, setForm] = useState({ patient_name: '', phone: '', date: '', time_slot: '', note: '' })
   const [status, setStatus] = useState('idle')   // idle | sending | done | error
@@ -33,7 +33,14 @@ export default function Appointments() {
           const docs = await r.json()
           const d = (Array.isArray(docs) ? docs : []).find((x) => String(x.id) === String(doctorId))
           if (d && alive) {
-            setCtx({ doctorName: d.name, hospitalName: d.hospital_name || '', hospitalId: d.hospital })
+            setCtx({
+  doctorName: d.name,
+  doctorDays: d.available_days || '',
+  doctorStart: (d.start_time || '').slice(0, 5),
+  doctorEnd: (d.end_time || '').slice(0, 5),
+  hospitalName: d.hospital_name || '',
+  hospitalId: d.hospital,
+})
             return
           }
         }
@@ -54,6 +61,10 @@ export default function Appointments() {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+
+  const slots = SLOTS.filter((s) =>
+  (!ctx.doctorStart || s >= ctx.doctorStart) && (!ctx.doctorEnd || s < ctx.doctorEnd)
+)
 
   async function submit() {
     setErrorMsg('')
@@ -118,13 +129,19 @@ export default function Appointments() {
   return (
     <main className="page">
       <div className="wrap wrap--narrow">
-        <div className="page__head">
+                <div className="page__head">
           <p className="eyebrow"><Hexbrow />{t('appt.title')}</p>
           <h1 className="page__title">{t('appt.title')}</h1>
           {(ctx.doctorName || ctx.hospitalName) && (
             <p className="page__sub">
               {ctx.doctorName && <>Dr. {ctx.doctorName}{ctx.hospitalName ? ` · ${ctx.hospitalName}` : ''}</>}
               {!ctx.doctorName && ctx.hospitalName}
+            </p>
+          )}
+          {ctx.doctorDays && (
+            <p className="appt-avail">
+              <Icon n="cal" /> {t('appt.avail')}: {ctx.doctorDays}
+              {ctx.doctorStart && `, ${ctx.doctorStart}–${ctx.doctorEnd}`}
             </p>
           )}
         </div>
@@ -150,7 +167,7 @@ export default function Appointments() {
               <span className="field__label">{t('appt.time')}</span>
               <select value={form.time_slot} onChange={set('time_slot')}>
                 <option value="">{t('appt.timePick')}</option>
-                {SLOTS.map((s) => <option key={s} value={s}>{s}</option>)}
+                {slots.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </label>
           </div>

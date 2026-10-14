@@ -31,6 +31,8 @@ class Doctor(models.Model):
     name = models.CharField(max_length=100)
     specialty = models.CharField(max_length=100)
     available_days = models.CharField(max_length=100, blank=True)  # e.g. "Sun–Thu, 10–4"
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Dr. {self.name} ({self.specialty})"

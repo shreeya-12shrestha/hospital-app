@@ -18,7 +18,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(Doctor)
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'specialty', 'hospital', 'available_days')
+    list_display = ('name', 'specialty', 'hospital', 'available_days', 'start_time', 'end_time')
     list_filter = ('hospital', 'specialty')
     search_fields = ('name', 'specialty')
 

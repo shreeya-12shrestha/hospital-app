@@ -89,6 +89,29 @@ export default function HospitalDetail() {
               </section>
             )}
 
+                        {raw.doctors.length > 0 && (
+              <section className="det__block">
+                <p className="eyebrow"><Hexbrow />{t('det.doctors')}</p>
+                <div className="doc-grid">
+                  {raw.doctors.map((d) => (
+                    <article className="doc-card" key={d.id}>
+                      <h3 className="doc-card__name">Dr. {d.name}</h3>
+                      {d.specialty && <span className="tag">{d.specialty}</span>}
+                      {d.available_days && (
+                        <p className="doc-card__meta">
+                          <Icon n="cal" />
+                          <span>{d.available_days}</span>
+                        </p>
+                      )}
+                      <Link className="btn btn--red doc-card__book" to={`/appointments?doctor=${d.id}`}>
+                        <Icon n="cal" /> {t('doc.book')}
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section className="det__block">
               <p className="eyebrow"><Hexbrow />{t('det.beds')}</p>
               <div className="beds">

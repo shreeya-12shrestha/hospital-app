@@ -57,7 +57,7 @@ export default function HospitalDetail() {
             <span className={`tag${h.gov ? ' tag--gov' : ''}`}>{h.specialty ?? t('tag.multi')}</span>
             <h1 className="page__title">{h.name}</h1>
             <p className="hosp__loc det__loc"><Icon n="pin" /><span>{h.location}</span></p>
-            {h.rating != null && (
+            {h.rating > 0 && (
               <p className="det__rate">
                 <Icon n="star" /><b>{h.rating}</b>
                 {h.reviews ? <span>{h.reviews} {t('det.reviews')}</span> : null}

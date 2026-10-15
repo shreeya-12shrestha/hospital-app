@@ -4,16 +4,10 @@ A bilingual (English / नेपाली) hospital finder and AI health assista
 
 > **Disclaimer:** Swasthya Track gives general information only. It is not a medical diagnosis. Always consult a qualified doctor.
 
-<!-- Add screenshots here once you have them:
-1. Make a folder: docs/screenshots/
-2. Save images there (e.g. home.png, hospital-detail.png, booking.png, chat.png)
-3. Remove this comment and the comment markers around the lines below.
-
 ![Home](docs/screenshots/home.png)
 ![Hospital detail](docs/screenshots/hospital-detail.png)
 ![Booking](docs/screenshots/booking.png)
 ![AI chat](docs/screenshots/chat.png)
--->
 
 ## Features
 

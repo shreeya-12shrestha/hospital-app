@@ -133,6 +133,16 @@ def extract_symptoms_with_gemini(text, lang):
     except Exception:
         return [], None
 
+def hospitals_context():
+    lines = []
+    for h in Hospital.objects.prefetch_related('services', 'doctors'):
+        services = ', '.join(s.name for s in h.services.all()) or 'not listed'
+        doctors = ', '.join(f'Dr. {d.name} ({d.specialty})' for d in h.doctors.all()) or 'not listed'
+        lines.append(
+            f'- {h.name}, {h.address}. Free beds: {h.available_beds} of {h.total_beds}. '
+            f'Services: {services}. Doctors: {doctors}.'
+        )
+    return '\n'.join(lines)
 
 CHAT_RULES = (
     "You are the AI health assistant for Swasthya Track, a hospital-finder app in Nepal.\n"
@@ -168,11 +178,18 @@ def chat(request):
             model="gemini-2.5-flash",
             contents=contents,
             config=types.GenerateContentConfig(
-                system_instruction=CHAT_RULES + f"\n- Always reply in {language}.",
+                system_instruction=(
+                    CHAT_RULES
+                    + f"\n- Always reply in {language}."
+                    + "\n\nHospitals listed in Swasthya Track. When recommending a hospital, "
+                    "choose only from this list, and say so if none fit:\n"
+                    + hospitals_context()
+                ),
             ),
         )
         return Response({'reply': response.text})
-    except Exception:
+    except Exception as e:
+        print("CHAT ERROR:", repr(e))
         return Response(
             {'error': 'AI service is temporarily unavailable. Please try again.'},
             status=503,

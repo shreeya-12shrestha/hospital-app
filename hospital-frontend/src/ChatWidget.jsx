@@ -63,7 +63,7 @@ export default function ChatWidget() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // lang travels with the message so Gemini answers in the language spoken
-        body: JSON.stringify({ message: text, lang }),
+        body: JSON.stringify({ message: text, lang, history: msgs.slice(-10) }),
       })
       const data = await r.json()
       setMsgs((m) => [...m, { me: false, text: data.reply ?? data.response ?? data.message ?? t('chat.demo') }])

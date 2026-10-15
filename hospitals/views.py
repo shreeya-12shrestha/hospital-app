@@ -141,7 +141,8 @@ CHAT_RULES = (
     "- For anything serious, advise seeing a doctor. For emergencies (chest pain, trouble "
     "breathing, heavy bleeding, fainting), tell the user to call 102 for an ambulance right away.\n"
     "- Keep replies short: 2-4 sentences in plain language.\n"
-    "- Politely decline topics that are not about health or this app.\n"
+    "- Politely decline requests clearly unrelated to health, such as poems or homework. "
+    "You may use details the user shared earlier in this chat, like their name.\n"
     "- Write plain text only: no markdown, no asterisks, no bullet lists."
 )
 
@@ -153,10 +154,19 @@ def chat(request):
         return Response({'error': 'Please send a message.'}, status=400)
     lang = request.data.get('lang', 'en')
     language = 'Nepali (Devanagari script)' if lang == 'ne' else 'English'
+    history = request.data.get('history', [])
+    if not isinstance(history, list):
+        history = []
+
+    contents = []
+    for turn in history[-10:]:
+        role = 'user' if turn.get('me') else 'model'
+        contents.append(types.Content(role=role, parts=[types.Part(text=str(turn.get('text', '')))]))
+    contents.append(types.Content(role='user', parts=[types.Part(text=message)]))
     try:
         response = gemini.models.generate_content(
             model="gemini-2.5-flash",
-            contents=message,
+            contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=CHAT_RULES + f"\n- Always reply in {language}.",
             ),

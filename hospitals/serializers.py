@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import serializers
 from .models import Hospital, Service, Doctor, Appointment
 
@@ -54,6 +55,16 @@ class AppointmentSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "This doctor already has a booking at that date and time."
                 )
+            if doctor.start_time and doctor.end_time:
+                try:
+                    slot = datetime.strptime(data['time_slot'], '%H:%M').time()
+                except ValueError:
+                    raise serializers.ValidationError("Please choose a valid time.")
+                if not (doctor.start_time <= slot < doctor.end_time):
+                    raise serializers.ValidationError(
+                        f"Dr. {doctor.name} is available only between "
+                        f"{doctor.start_time:%H:%M} and {doctor.end_time:%H:%M}."
+                    )
         return data
 
 

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from google import genai
 import joblib
 import pandas as pd
+from google.genai import types
 from .models import Hospital, Service, Doctor, Appointment
 from .serializers import HospitalSerializer, HospitalDetailSerializer, AppointmentSerializer, DoctorSerializer
 
@@ -133,15 +134,32 @@ def extract_symptoms_with_gemini(text, lang):
         return [], None
 
 
+CHAT_RULES = (
+    "You are the AI health assistant for Swasthya Track, a hospital-finder app in Nepal.\n"
+    "Rules:\n"
+    "- Give general health information only. Never diagnose, and never suggest medicine doses.\n"
+    "- For anything serious, advise seeing a doctor. For emergencies (chest pain, trouble "
+    "breathing, heavy bleeding, fainting), tell the user to call 102 for an ambulance right away.\n"
+    "- Keep replies short: 2-4 sentences in plain language.\n"
+    "- Politely decline topics that are not about health or this app.\n"
+    "- Write plain text only: no markdown, no asterisks, no bullet lists."
+)
+
+
 @api_view(['POST'])
 def chat(request):
     message = request.data.get('message', '')
     if not message:
         return Response({'error': 'Please send a message.'}, status=400)
+    lang = request.data.get('lang', 'en')
+    language = 'Nepali (Devanagari script)' if lang == 'ne' else 'English'
     try:
         response = gemini.models.generate_content(
             model="gemini-2.5-flash",
             contents=message,
+            config=types.GenerateContentConfig(
+                system_instruction=CHAT_RULES + f"\n- Always reply in {language}.",
+            ),
         )
         return Response({'reply': response.text})
     except Exception:

@@ -2798,3 +2798,37 @@ html[lang="ne"] .hero h1 {
     width: 16px;
     height: 16px
 }
+
+/* ---- read-aloud button on assistant replies ---- */
+
+.bubble__speak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-top: 8px;
+    padding: 0;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: color .16s ease, border-color .16s ease, background .16s ease
+}
+
+.bubble__speak:hover {
+    color: var(--ink);
+    border-color: var(--muted)
+}
+
+.bubble__speak.is-on {
+    color: var(--blue);
+    border-color: var(--blue);
+    background: var(--blue-tint)
+}
+
+.bubble__speak svg {
+    width: 15px;
+    height: 15px
+}

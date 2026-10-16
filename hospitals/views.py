@@ -180,7 +180,10 @@ def chat(request):
             config=types.GenerateContentConfig(
                 system_instruction=(
                     CHAT_RULES
-                    + f"\n- Always reply in {language}."
+                    + "\n- Reply in the same language the user writes in. If they write Nepali in "
+                    "Devanagari, reply in Devanagari. If they write Nepali in Roman letters "
+                    "(like 'malai jwaro aayo'), reply in Nepali using Roman letters."
+                    + f"\n- If the language is unclear, reply in {language}."
                     + "\n\nHospitals listed in Swasthya Track. When recommending a hospital, "
                     "choose only from this list, and say so if none fit:\n"
                     + hospitals_context()

@@ -6,6 +6,18 @@ const SR = typeof window !== 'undefined'
   ? window.SpeechRecognition || window.webkitSpeechRecognition
   : null
 
+  const TTS = typeof window !== 'undefined' ? window.speechSynthesis : null
+
+// first installed voice whose language starts with one of the prefixes
+function pickVoice(prefixes) {
+  const voices = TTS ? TTS.getVoices() : []
+  for (const p of prefixes) {
+    const v = voices.find((x) => x.lang.toLowerCase().startsWith(p))
+    if (v) return v
+  }
+  return null
+}
+
 export default function ChatWidget() {
   const { t, lang } = useApp()
   const [open, setOpen] = useState(true)
@@ -13,6 +25,7 @@ export default function ChatWidget() {
   const [draft, setDraft] = useState('')
   const [listening, setListening] = useState(false)
   const [busy, setBusy] = useState(false)
+    const [speakingIdx, setSpeakingIdx] = useState(null)
 
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
@@ -42,6 +55,23 @@ export default function ChatWidget() {
     recRef.current = rec
     return () => { try { rec.abort() } catch { /* already stopped */ } }
   }, [])
+
+  // stop talking if the widget goes away
+  useEffect(() => () => TTS?.cancel(), [])
+
+  const speak = (text, idx) => {
+    if (!TTS) return
+    TTS.cancel()
+    if (speakingIdx === idx) { setSpeakingIdx(null); return }
+    const u = new SpeechSynthesisUtterance(text)
+    const nepali = /[\u0900-\u097F]/.test(text)
+    u.lang = nepali ? 'ne-NP' : 'en-US'
+    u.voice = pickVoice(nepali ? ['ne', 'hi'] : ['en'])
+    u.onend = () => setSpeakingIdx(null)
+    u.onerror = () => setSpeakingIdx(null)
+    setSpeakingIdx(idx)
+    TTS.speak(u)
+  }
 
   const toggleMic = () => {
     const rec = recRef.current
@@ -94,7 +124,19 @@ export default function ChatWidget() {
           <div className="bubble">{t('chat.greeting')}</div>
 
           {msgs.map((m, i) => (
-            <div className={`bubble${m.me ? ' bubble--me' : ''}`} key={i}>{m.text}</div>
+                        <div className={`bubble${m.me ? ' bubble--me' : ''}`} key={i}>
+              {m.text}
+              {!m.me && TTS && (
+                <button
+                  type="button"
+                  className={`bubble__speak${speakingIdx === i ? ' is-on' : ''}`}
+                  aria-label={t(speakingIdx === i ? 'a11y.speakStop' : 'a11y.speak')}
+                  onClick={() => speak(m.text, i)}
+                >
+                  <Icon n="volume" />
+                </button>
+              )}
+            </div>
           ))}
           {busy && <div className="bubble bubble--typing"><i /><i /><i /></div>}
 

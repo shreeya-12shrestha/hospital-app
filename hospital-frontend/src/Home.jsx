@@ -17,10 +17,9 @@ export default function Home() {
 
   useEffect(() => {
     let alive = true
-    fetch('/api/hospitals/')
+    fetch('/api/hospitals/?promoted=true')
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((data) => {
-        // DRF may return a bare array or a paginated { results: [] }
         const list = Array.isArray(data) ? data : data.results ?? []
         if (alive) setHospitals(list)
       })

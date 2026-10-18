@@ -1,8 +1,4 @@
 import { useEffect, useState } from 'react'
-
-// One shared fetch for the hospitals list, reused by Hospitals, Doctors and Detail.
-// Returns { data, loading, error }. On failure data stays null so callers can
-// decide whether to show demo content or an empty state.
 export function useHospitals() {
   const [state, setState] = useState({ data: null, loading: true, error: false })
 
@@ -32,9 +28,14 @@ export function normalizeHospital(h, i = 0) {
     reviews: h.reviews ?? h.review_count ?? null,
     specialty: h.specialty ?? h.type ?? null,
     beds: h.beds ?? h.available_beds ?? null,
+    totalBeds: h.total_beds ?? null,
     gov: /gov/i.test(h.specialty ?? h.type ?? ''),
     phone: h.phone ?? h.contact ?? null,
     description: h.description ?? null,
+    image: h.image ?? null,
+    latitude: h.latitude != null ? Number(h.latitude) : null,
+    longitude: h.longitude != null ? Number(h.longitude) : null,
+    isPromoted: h.is_promoted ?? false,
     raw: h,
   }
 }

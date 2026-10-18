@@ -6,7 +6,7 @@ const SR = typeof window !== 'undefined'
   ? window.SpeechRecognition || window.webkitSpeechRecognition
   : null
 
-  const TTS = typeof window !== 'undefined' ? window.speechSynthesis : null
+const TTS = typeof window !== 'undefined' ? window.speechSynthesis : null
 
 // first installed voice whose language starts with one of the prefixes
 function pickVoice(prefixes) {
@@ -31,7 +31,7 @@ export default function ChatWidget() {
   const inputRef = useRef(null)
   const recRef = useRef(null)
   const transcriptRef = useRef('')               // latest words heard by the mic
-  const sendRef = useRef(null)                   // always points at the newest send()                // was the current draft spoken into the mic?
+  const sendRef = useRef(null)                   // always points at the newest send()                
   const langRef = useRef(lang)
   langRef.current = lang                         // recognition reads this at start time
 
@@ -58,7 +58,7 @@ export default function ChatWidget() {
       const heard = transcriptRef.current.trim()
       transcriptRef.current = ''
       if (heard) sendRef.current?.(heard)          // finished speaking → send it
-    };    rec.onerror = () => setListening(false)
+    }; rec.onerror = () => setListening(false)
     recRef.current = rec
     return () => { try { rec.abort() } catch { /* already stopped */ } }
   }, [])
@@ -83,8 +83,9 @@ export default function ChatWidget() {
   const toggleMic = () => {
     const rec = recRef.current
     if (!rec) return
-    if (listening) { rec.stop(); return
-     }
+    if (listening) {
+      rec.stop(); return
+    }
     TTS?.cancel()                                // don't let the mic hear our own voice
     setSpeakingIdx(null)
     // ne-NP and en-US are the two recognition locales
@@ -109,13 +110,14 @@ export default function ChatWidget() {
       const data = await r.json()
       const reply = data.reply ?? data.response ?? data.message ?? t('chat.demo')
       setMsgs((m) => [...m, { me: false, text: reply }])
-      speak(reply, replyIdx)    } catch {
+      speak(reply, replyIdx)
+    } catch {
       setMsgs((m) => [...m, { me: false, text: t('chat.demo') }])
     } finally {
       setBusy(false)
     }
   }
-  
+
   useEffect(() => { sendRef.current = send })
   const quick = ['chat.q1', 'chat.q2', 'chat.q3', 'chat.q4']
 
@@ -137,7 +139,7 @@ export default function ChatWidget() {
           <div className="bubble">{t('chat.greeting')}</div>
 
           {msgs.map((m, i) => (
-                        <div className={`bubble${m.me ? ' bubble--me' : ''}`} key={i}>
+            <div className={`bubble${m.me ? ' bubble--me' : ''}`} key={i}>
               {m.text}
               {!m.me && TTS && (
                 <button

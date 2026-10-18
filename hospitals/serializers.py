@@ -1,7 +1,8 @@
 from datetime import datetime
 from rest_framework import serializers
 from .models import Hospital, Service, Doctor, Appointment
-
+from django.contrib.auth import password_validation
+from django.contrib.auth.models import User
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:

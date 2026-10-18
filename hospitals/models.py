@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.conf import settings
 class Hospital(models.Model):
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=300)
@@ -41,6 +41,10 @@ class Doctor(models.Model):
 class Appointment(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='appointments')
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True, related_name='appointments')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='appointments',
+    )
     patient_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     date = models.DateField()

@@ -25,11 +25,13 @@ export default function ChatWidget() {
   const [draft, setDraft] = useState('')
   const [listening, setListening] = useState(false)
   const [busy, setBusy] = useState(false)
-    const [speakingIdx, setSpeakingIdx] = useState(null)
+  const [speakingIdx, setSpeakingIdx] = useState(null)
 
   const bodyRef = useRef(null)
   const inputRef = useRef(null)
   const recRef = useRef(null)
+  const transcriptRef = useRef('')               // latest words heard by the mic
+  const sendRef = useRef(null)                   // always points at the newest send()                // was the current draft spoken into the mic?
   const langRef = useRef(lang)
   langRef.current = lang                         // recognition reads this at start time
 
@@ -49,9 +51,14 @@ export default function ChatWidget() {
       let text = ''
       for (let i = e.resultIndex; i < e.results.length; i++) text += e.results[i][0].transcript
       setDraft(text)
+      transcriptRef.current = text
     }
-    rec.onend = () => setListening(false)
-    rec.onerror = () => setListening(false)
+    rec.onend = () => {
+      setListening(false)
+      const heard = transcriptRef.current.trim()
+      transcriptRef.current = ''
+      if (heard) sendRef.current?.(heard)          // finished speaking → send it
+    };    rec.onerror = () => setListening(false)
     recRef.current = rec
     return () => { try { rec.abort() } catch { /* already stopped */ } }
   }, [])
@@ -76,7 +83,10 @@ export default function ChatWidget() {
   const toggleMic = () => {
     const rec = recRef.current
     if (!rec) return
-    if (listening) { rec.stop(); return }
+    if (listening) { rec.stop(); return
+     }
+    TTS?.cancel()                                // don't let the mic hear our own voice
+    setSpeakingIdx(null)
     // ne-NP and en-US are the two recognition locales
     rec.lang = langRef.current === 'ne' ? 'ne-NP' : 'en-US'
     try { rec.start(); setListening(true) } catch { /* start() while already running */ }
@@ -85,6 +95,7 @@ export default function ChatWidget() {
   const send = async (textArg) => {
     const text = (textArg ?? draft).trim()
     if (!text || busy) return
+    const replyIdx = msgs.length + 1               // user message lands at msgs.length, reply right after
     setMsgs((m) => [...m, { me: true, text }])
     setDraft('')
     setBusy(true)
@@ -96,14 +107,16 @@ export default function ChatWidget() {
         body: JSON.stringify({ message: text, lang, history: msgs.slice(-10) }),
       })
       const data = await r.json()
-      setMsgs((m) => [...m, { me: false, text: data.reply ?? data.response ?? data.message ?? t('chat.demo') }])
-    } catch {
+      const reply = data.reply ?? data.response ?? data.message ?? t('chat.demo')
+      setMsgs((m) => [...m, { me: false, text: reply }])
+      speak(reply, replyIdx)    } catch {
       setMsgs((m) => [...m, { me: false, text: t('chat.demo') }])
     } finally {
       setBusy(false)
     }
   }
-
+  
+  useEffect(() => { sendRef.current = send })
   const quick = ['chat.q1', 'chat.q2', 'chat.q3', 'chat.q4']
 
   return (

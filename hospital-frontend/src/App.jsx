@@ -9,7 +9,9 @@ import SymptomChecker from './SymptomChecker'
 import Doctors from './Doctors'
 import ChatWidget from './ChatWidget'
 import Appointments from './Appointments'
-
+import Login from './Login'
+import Register from './Register'
+import MyAppointments from './MyAppointments'
 function App() {
   return (
     <AppProvider>
@@ -22,6 +24,9 @@ function App() {
         <Route path="/symptom-check" element={<SymptomChecker />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/appointments" element={<Appointments />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/my-appointments" element={<MyAppointments />} />
       </Routes>
       <ChatWidget />
     </AppProvider>

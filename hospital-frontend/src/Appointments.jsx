@@ -11,7 +11,7 @@ const SLOTS = [
 ]
 
 export default function Appointments() {
-  const { t, lang } = useApp()
+  const { t, lang, user, authHeaders } = useApp()
   const [params] = useSearchParams()
   const doctorId = params.get('doctor')
   const hospitalParam = params.get('hospital')
@@ -20,6 +20,12 @@ export default function Appointments() {
   const [ctx, setCtx] = useState({ doctorName: '', doctorDays: '', doctorStart: '', doctorEnd: '', hospitalName: '', hospitalId: hospitalParam || '' })
 
   const [form, setForm] = useState({ patient_name: '', phone: '', date: '', time_slot: '', note: '' })
+  
+  // logged-in patients don't have to type their name and phone again
+  useEffect(() => {
+    if (!user) return
+    setForm((f) => ({ ...f, patient_name: f.patient_name || user.name, phone: f.phone || user.phone }))
+  }, [user])
   const [status, setStatus] = useState('idle')   // idle | sending | done | error
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -91,8 +97,7 @@ export default function Appointments() {
 
       const r = await fetch('/api/appointments/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },        body: JSON.stringify(body),
       })
       if (!r.ok) {
         const data = await r.json().catch(() => ({}))

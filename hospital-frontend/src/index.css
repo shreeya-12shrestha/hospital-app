@@ -2606,6 +2606,7 @@ html[lang="ne"] .hero h1 {
     }
 }
 
+
 /* ---- appointment booking form ---- */
 
 .appt-form {
@@ -2684,7 +2685,9 @@ html[lang="ne"] .hero h1 {
     background-position: right 14px center
 }
 
+
 /* lets the browser draw the date picker and dropdown in dark colours */
+
 [data-theme="dark"] .field input,
 [data-theme="dark"] .field select {
     color-scheme: dark
@@ -2715,6 +2718,7 @@ html[lang="ne"] .hero h1 {
     opacity: .6;
     cursor: wait
 }
+
 
 /* ---- booking confirmed screen ---- */
 
@@ -2757,7 +2761,6 @@ html[lang="ne"] .hero h1 {
     .appt-form {
         padding: 20px
     }
-
     .field-row {
         grid-template-columns: 1fr
     }
@@ -2799,6 +2802,7 @@ html[lang="ne"] .hero h1 {
     height: 16px
 }
 
+
 /* ---- read-aloud button on assistant replies ---- */
 
 .bubble__speak {
@@ -2831,4 +2835,63 @@ html[lang="ne"] .hero h1 {
 .bubble__speak svg {
     width: 15px;
     height: 15px
+}
+
+
+/* ---- patient accounts ---- */
+
+.auth-switch {
+    margin: 0;
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.auth-switch a {
+    color: var(--blue);
+    font-weight: 600
+}
+
+.nav__login {
+    padding: 9px 18px;
+    font-size: 14px;
+    box-shadow: none
+}
+
+.my-appts {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none
+}
+
+.my-appt {
+    padding: 18px 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg)
+}
+
+.my-appt__when {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink)
+}
+
+.my-appt__when svg {
+    width: 16px;
+    height: 16px;
+    color: var(--blue)
+}
+
+.my-appt__when .tag {
+    margin-left: auto
+}
+
+.my-appt__who {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 14px
 }

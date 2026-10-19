@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
-
+function initials(name = '') {
+  return name.split(' ').filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+}
 export default function Nav() {
-  const { t, lang, setLang, theme, toggleTheme } = useApp()
+  const { t, lang, setLang, theme, toggleTheme, user, signOut } = useApp() 
   const [menuOpen, setMenuOpen] = useState(false)   // profile dropdown
   const [navOpen, setNavOpen] = useState(false)     // mobile burger
   const profileRef = useRef(null)
@@ -95,27 +97,34 @@ export default function Nav() {
             <span className="dot" />
           </button>
 
-          <div className={`profile${menuOpen ? ' is-open' : ''}`} ref={profileRef}>
-            <button
-              className="profile__btn"
-              aria-expanded={menuOpen}
-              aria-haspopup="true"
-              onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v) }}
-            >
-              <span className="avatar">SS</span>
-              <Icon n="down" />
-            </button>
-            <div className="menu" role="menu">
-              <div className="menu__head">
-                <strong>Shreeya Shrestha</strong>
-                <span>{t('menu.role')}</span>
+                    {user ? (
+            <div className={`profile${menuOpen ? ' is-open' : ''}`} ref={profileRef}>
+              <button
+                className="profile__btn"
+                aria-expanded={menuOpen}
+                aria-haspopup="true"
+                onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v) }}
+              >
+                <span className="avatar">{initials(user.name)}</span>
+                <Icon n="down" />
+              </button>
+              <div className="menu" role="menu">
+                <div className="menu__head">
+                  <strong>{user.name}</strong>
+                  <span>{user.phone}</span>
+                </div>
+                <Link to="/my-appointments" role="menuitem" onClick={() => setMenuOpen(false)}>
+                  {t('menu.appts')}
+                </Link>
+                <Link to="/" role="menuitem" className="is-danger"
+                  onClick={() => { setMenuOpen(false); signOut() }}>
+                  {t('menu.signout')}
+                </Link>
               </div>
-              <a href="#" role="menuitem">{t('menu.profile')}</a>
-              <a href="#" role="menuitem">{t('menu.appts')}</a>
-              <a href="#" role="menuitem">{t('menu.records')}</a>
-              <a href="#" role="menuitem" className="is-danger">{t('menu.signout')}</a>
             </div>
-          </div>
+          ) : (
+            <Link className="btn btn--red nav__login" to="/login">{t('menu.login')}</Link>
+          )}
         </div>
       </div>
     </header>

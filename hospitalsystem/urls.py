@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from hospitals.views import HospitalListView, DoctorListView ,HospitalDetailView, AppointmentCreateView, symptom_check, chat
+from hospitals.views import MyAppointmentsView, register, login, logout, me
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/hospitals/', HospitalListView.as_view()),
@@ -9,4 +10,9 @@ urlpatterns = [
     path('api/symptom-check/', symptom_check),
     path('api/chat/', chat),
     path('api/doctors/', DoctorListView.as_view()),
+    path('api/my-appointments/', MyAppointmentsView.as_view()),
+    path('api/register/', register),
+    path('api/login/', login),
+    path('api/logout/', logout),
+    path('api/me/', me),
 ]

@@ -1,5 +1,8 @@
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from django.conf import settings
 from django.db import models
@@ -12,7 +15,7 @@ import pandas as pd
 from google.genai import types
 from .models import Hospital, Service, Doctor, Appointment
 from .serializers import HospitalSerializer, HospitalDetailSerializer, AppointmentSerializer, DoctorSerializer
-
+from .serializers import RegisterSerializer, clean_phone
 load_dotenv()
 gemini = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -67,7 +70,61 @@ class DoctorListView(generics.ListAPIView):
 class AppointmentCreateView(generics.CreateAPIView):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
-# --- Symptom checker: load the trained model once at startup ---
+
+    def perform_create(self, serializer):
+        # logged-in patients get the booking linked to their account; guests stay anonymous
+        user = self.request.user if self.request.user.is_authenticated else None
+        serializer.save(user=user)
+
+
+class MyAppointmentsView(generics.ListAPIView):
+    serializer_class = AppointmentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return (Appointment.objects.filter(user=self.request.user)
+                .select_related('hospital', 'doctor')
+                .order_by('-date', '-time_slot'))
+
+
+# --- Patient accounts ---
+
+def account_payload(user, token):
+    return {'token': token.key, 'user': {'name': user.first_name, 'phone': user.username}}
+
+
+@api_view(['POST'])
+def register(request):
+    serializer = RegisterSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.save()
+    token = Token.objects.create(user=user)
+    return Response(account_payload(user, token), status=201)
+
+
+@api_view(['POST'])
+def login(request):
+    user = authenticate(
+        username=clean_phone(request.data.get('phone', '')),
+        password=request.data.get('password', ''),
+    )
+    if user is None:
+        return Response({'error': 'Wrong phone number or password.'}, status=400)
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response(account_payload(user, token))
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    request.user.auth_token.delete()
+    return Response(status=204)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def me(request):
+    return Response({'name': request.user.first_name, 'phone': request.user.username})
 ML_DIR = settings.BASE_DIR / 'ml'
 model = joblib.load(ML_DIR / 'disease_model.pkl')
 symptom_list = joblib.load(ML_DIR / 'symptoms.pkl')

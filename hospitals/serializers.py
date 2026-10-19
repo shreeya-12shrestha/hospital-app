@@ -28,10 +28,12 @@ class HospitalDetailSerializer(serializers.ModelSerializer):
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    hospital_name = serializers.CharField(source='hospital.name', read_only=True)
+    doctor_name = serializers.CharField(source='doctor.name', read_only=True, default=None)
     class Meta:
         model = Appointment
-        fields = ['id', 'hospital', 'doctor', 'patient_name', 'phone', 'date', 'time_slot', 'note']
-
+        fields = ['id', 'hospital', 'doctor', 'hospital_name', 'doctor_name',
+                  'patient_name', 'phone', 'date', 'time_slot', 'note']
     def validate_phone(self, value):
         cleaned = value.replace('-', '').replace(' ', '').replace('+', '')
         if not cleaned.isdigit() or len(cleaned) < 7:
@@ -73,3 +75,31 @@ class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
         fields = '__all__'
+def clean_phone(value):
+    digits = ''.join(ch for ch in value if ch.isdigit())
+    if digits.startswith('977') and len(digits) == 13:
+        digits = digits[3:]
+    return digits
+
+
+class RegisterSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    phone = serializers.CharField(max_length=20)
+    password = serializers.CharField(write_only=True)
+
+    def validate_phone(self, value):
+        phone = clean_phone(value)
+        if len(phone) != 10 or not phone.startswith('9'):
+            raise serializers.ValidationError("Enter a 10-digit mobile number, e.g. 98XXXXXXXX.")
+        if User.objects.filter(username=phone).exists():
+            raise serializers.ValidationError("An account with this phone number already exists.")
+        return phone
+
+    def validate_password(self, value):
+        password_validation.validate_password(value)
+        return value
+
+    def create(self, data):
+        return User.objects.create_user(
+            username=data['phone'], password=data['password'], first_name=data['name'],
+        )

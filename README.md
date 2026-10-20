@@ -1,6 +1,6 @@
 # Swasthya Track (स्वास्थ्य Track)
 
-A bilingual (English / नेपाली) hospital finder and AI health assistant for Nepal. Patients can find hospitals, check bed availability, book appointments with doctors, describe their symptoms in their own words, and chat with an assistant that recommends hospitals from real data.
+A bilingual (English / नेपाली) hospital finder and AI health assistant for Nepal. Patients can find hospitals, check bed availability, book appointments with doctors, keep their bookings in a personal account, describe their symptoms in their own words, and talk to a voice assistant that recommends hospitals from real data.
 
 > **Disclaimer:** Swasthya Track gives general information only. It is not a medical diagnosis. Always consult a qualified doctor.
 
@@ -15,13 +15,17 @@ A bilingual (English / नेपाली) hospital finder and AI health assista
 
 **Book appointments.** The time picker only offers slots within the doctor's working hours. The backend validates every booking: no past dates, valid phone numbers, no double booking, and no slots outside the doctor's hours.
 
+**Patient accounts.** Patients sign up with their mobile number and a password. When logged in, the booking form fills in their name and phone, and every booking is saved to their account under "My appointments". Guests can still book without an account. Django hashes the passwords and checks them against its password rules, and the API uses token authentication.
+
 **AI symptom checker.** Patients describe how they feel in English or Nepali. Gemini maps the description to a fixed list of 132 known symptoms, and a Random Forest model predicts the most likely condition. The reply comes with a calm explanation and a disclaimer.
 
 **AI chat assistant.**
 - A system prompt sets its role and safety rules: no diagnosis, no medicine doses, and "call 102" for emergencies.
 - It remembers the last 10 messages of the conversation.
 - Hospital recommendations are grounded in the app's database (a simple form of RAG), so it suggests real hospitals from the app instead of inventing names.
-- Voice input works in Nepali and English.
+- It replies in the language the user writes in: English, Nepali in Devanagari, or Nepali in Roman letters.
+
+**Voice assistant.** Patients can speak a question in Nepali or English. It is sent as soon as they stop talking, and every reply is read aloud (with a Nepali or Hindi voice for Devanagari text). Any reply can be replayed or stopped with its speaker button.
 
 **Built for Nepal.** Full English/Nepali interface and dark/light themes.
 
@@ -47,12 +51,16 @@ flowchart LR
 
 Each message is sent to Gemini together with the system prompt, the recent conversation history, and a summary of hospitals pulled from the database (services, doctors, free beds).
 
+**Accounts**
+
+When a patient registers or logs in, the backend returns a token. The React app stores it and sends it as an `Authorization: Token ...` header, so the backend knows who is booking and whose appointments to return.
+
 ## Tech stack
 
 | Layer | Tools |
 |---|---|
-| Frontend | React 19, Vite, React Router |
-| Backend | Django 5.2, Django REST Framework, SQLite |
+| Frontend | React 19, Vite, React Router, Web Speech API (voice input and spoken replies) |
+| Backend | Django 5.2, Django REST Framework (token authentication), SQLite |
 | AI / ML | Gemini 2.5 Flash (`google-genai`), scikit-learn Random Forest, pandas, joblib |
 
 ## Getting started
@@ -112,9 +120,16 @@ This rebuilds `disease_model.pkl` and `symptoms.pkl` from `Training.csv`.
 | GET | `/api/hospitals/` | List hospitals. Query params: `search`, `city`, `promoted=true`, `sort=rating\|beds\|name` |
 | GET | `/api/hospitals/<id>/` | One hospital with its services and doctors |
 | GET | `/api/doctors/` | List doctors. Query params: `hospital`, `specialty`, `search` |
-| POST | `/api/appointments/` | Book an appointment |
+| POST | `/api/appointments/` | Book an appointment. With a token, the booking is linked to the patient's account |
 | POST | `/api/symptom-check/` | `{ "symptoms": "...", "lang": "en" \| "ne" }` → reply, predicted condition, matched symptoms |
 | POST | `/api/chat/` | `{ "message": "...", "lang": "en" \| "ne", "history": [...] }` → `{ "reply": "..." }` |
+| POST | `/api/register/` | `{ "name", "phone", "password" }` → token and user |
+| POST | `/api/login/` | `{ "phone", "password" }` → token and user |
+| POST | `/api/logout/` | Deletes the token (token required) |
+| GET | `/api/me/` | The logged-in patient's name and phone (token required) |
+| GET | `/api/my-appointments/` | The logged-in patient's bookings, newest first (token required) |
+
+Endpoints marked "token required" expect an `Authorization: Token <token>` header.
 
 ## Project structure
 
@@ -133,8 +148,10 @@ hospital-app/
 - The disease model is trained on the full dataset and has no held-out evaluation yet. Next step: a train/test split with accuracy and per-class metrics.
 - The training data is a small public dataset, so predictions are not clinically validated.
 - Doctor working hours are validated, but working days are still stored as free text.
-- There are no patient accounts yet. The profile menu is a placeholder.
-- Planned: an ambulance locator using hospital coordinates, and spoken replies for the voice assistant.
+- Health records are intentionally not built yet. They need stronger protection (encryption, access controls, audit logs) than this prototype has.
+- The login token is kept in the browser's localStorage, which is fine for a prototype. A production app would use secure, HTTP-only cookies.
+- Spoken replies depend on the voices installed in the browser. Nepali written in Roman letters is read with an English voice.
+- Planned: an ambulance locator using hospital coordinates.
 - Settings are for local development (`DEBUG = True`) and are not production-ready.
 
 <!-- Add the authors / team members and the dataset source link here, e.g.

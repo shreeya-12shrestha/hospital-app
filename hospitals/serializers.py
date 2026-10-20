@@ -60,6 +60,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
                 date=data['date'],
                 time_slot=data['time_slot'],
             ).exists()
+            if not doctor.works_on(data['date']):
+                raise serializers.ValidationError(
+                    f"Dr. {doctor.name} does not see patients on {data['date']:%A}s."
+                )
             if exists:
                 raise serializers.ValidationError(
                     "This doctor already has a booking at that date and time."

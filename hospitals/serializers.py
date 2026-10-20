@@ -12,11 +12,17 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 class DoctorSerializer(serializers.ModelSerializer):
     hospital_name = serializers.CharField(source='hospital.name', read_only=True)
+    work_days = serializers.SerializerMethodField()
 
     class Meta:
         model = Doctor
-        fields = ['id', 'name', 'specialty', 'available_days', 'start_time', 'end_time', 'hospital', 'hospital_name']
+        fields = ['id', 'name', 'specialty', 'available_days', 'start_time', 'end_time',
+                  'work_days', 'hospital', 'hospital_name']
 
+    def get_work_days(self, doctor):
+        # JavaScript's getDay(): Sunday = 0 ... Saturday = 6
+        js_order = ['works_sun', 'works_mon', 'works_tue', 'works_wed', 'works_thu', 'works_fri', 'works_sat']
+        return [i for i, field in enumerate(js_order) if getattr(doctor, field)]
 
 class HospitalDetailSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True, read_only=True)

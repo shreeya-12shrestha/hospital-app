@@ -33,7 +33,19 @@ class Doctor(models.Model):
     available_days = models.CharField(max_length=100, blank=True)  # e.g. "Sun–Thu, 10–4"
     start_time = models.TimeField(null=True, blank=True)
     end_time = models.TimeField(null=True, blank=True)
+    # which days the doctor sees patients (Saturday is the usual day off in Nepal)
+    works_sun = models.BooleanField('Sunday', default=True)
+    works_mon = models.BooleanField('Monday', default=True)
+    works_tue = models.BooleanField('Tuesday', default=True)
+    works_wed = models.BooleanField('Wednesday', default=True)
+    works_thu = models.BooleanField('Thursday', default=True)
+    works_fri = models.BooleanField('Friday', default=True)
+    works_sat = models.BooleanField('Saturday', default=False)
 
+    def works_on(self, day):
+        # Python's day.weekday(): Monday = 0 ... Sunday = 6
+        fields = ['works_mon', 'works_tue', 'works_wed', 'works_thu', 'works_fri', 'works_sat', 'works_sun']
+        return getattr(self, fields[day.weekday()])
     def __str__(self):
         return f"Dr. {self.name} ({self.specialty})"
 

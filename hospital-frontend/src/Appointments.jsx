@@ -17,7 +17,7 @@ export default function Appointments() {
   const hospitalParam = params.get('hospital')
 
   // context we display + the hospital id we must send
-  const [ctx, setCtx] = useState({ doctorName: '', doctorDays: '', doctorStart: '', doctorEnd: '', hospitalName: '', hospitalId: hospitalParam || '' })
+  const [ctx, setCtx] = useState({ doctorName: '', doctorDays: '', doctorStart: '', doctorEnd: '', hospitalName: '', hospitalId: hospitalParam || '', doctorWorkDays: null })
 
   const [form, setForm] = useState({ patient_name: '', phone: '', date: '', time_slot: '', note: '' })
   
@@ -46,6 +46,7 @@ export default function Appointments() {
   doctorEnd: (d.end_time || '').slice(0, 5),
   hospitalName: d.hospital_name || '',
   hospitalId: d.hospital,
+  doctorWorkDays: d.work_days || null,
 })
             return
           }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useApp } from './AppContext'
 import { Icon } from './Icons'
 function initials(name = '') {
@@ -26,7 +26,7 @@ export default function Nav() {
   }, [])
 
   const links = [
-    { to: '/', label: t('nav.home'), active: true },
+    { to: '/', label: t('nav.home') },
     { to: '/hospitals', label: t('nav.hospitals') },
     { to: '/symptom-check', label: t('nav.symptoms') },
     { to: '/doctors', label: t('nav.doctors') },
@@ -55,14 +55,15 @@ export default function Nav() {
 
         <nav className="nav__links" aria-label="Main">
           {links.map((l, i) => (
-            <Link
+            <NavLink
               key={i}
               to={l.to}
-              className={l.active ? 'is-active' : undefined}
+              end={l.to === '/'}
+              className={({ isActive }) => (isActive ? 'is-active' : undefined)}
               onClick={() => setNavOpen(false)}
             >
               {l.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 

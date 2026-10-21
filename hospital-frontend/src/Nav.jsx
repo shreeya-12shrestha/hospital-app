@@ -31,7 +31,6 @@ export default function Nav() {
     { to: '/symptom-check', label: t('nav.symptoms') },
     { to: '/doctors', label: t('nav.doctors') },
     { to: '/about', label: t('nav.about') },
-    { to: '/contact', label: t('nav.contact') },
   ]
 
   return (

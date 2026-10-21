@@ -73,6 +73,10 @@ export default function Appointments() {
   (!ctx.doctorStart || s >= ctx.doctorStart) && (!ctx.doctorEnd || s < ctx.doctorEnd)
 )
 
+  // the date input gives "2026-10-24"; adding T00:00 reads it as local time, not UTC
+  const pickedDay = form.date ? new Date(`${form.date}T00:00`).getDay() : null
+  const dayOff = pickedDay !== null && ctx.doctorWorkDays !== null && !ctx.doctorWorkDays.includes(pickedDay)
+
   async function submit() {
     setErrorMsg('')
     // client-side check for the required fields
@@ -167,6 +171,7 @@ export default function Appointments() {
             <label className="field">
               <span className="field__label">{t('appt.date')}</span>
               <input type="date" value={form.date} min={today} onChange={set('date')} />
+              {dayOff && <span className="field__error">{t('appt.dayOff')}</span>}
             </label>
 
             <label className="field">
@@ -185,8 +190,7 @@ export default function Appointments() {
 
           {errorMsg && <p className="appt-error">{errorMsg}</p>}
 
-          <button className="btn btn--red appt-submit" disabled={status === 'sending'} onClick={submit}>
-            <Icon n="cal" /> {status === 'sending' ? t('appt.sending') : t('appt.submit')}
+          <button className="btn btn--red appt-submit" disabled={status === 'sending' || dayOff} onClick={submit}>            <Icon n="cal" /> {status === 'sending' ? t('appt.sending') : t('appt.submit')}
           </button>
         </div>
       </div>

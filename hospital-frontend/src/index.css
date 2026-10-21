@@ -2895,3 +2895,8 @@ html[lang="ne"] .hero h1 {
     color: var(--muted);
     font-size: 14px
 }
+
+.field__error {
+    font-size: 13px;
+    color: var(--red)
+}

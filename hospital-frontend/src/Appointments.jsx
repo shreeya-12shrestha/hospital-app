@@ -20,7 +20,7 @@ export default function Appointments() {
   const [ctx, setCtx] = useState({ doctorName: '', doctorDays: '', doctorStart: '', doctorEnd: '', hospitalName: '', hospitalId: hospitalParam || '', doctorWorkDays: null })
 
   const [form, setForm] = useState({ patient_name: '', phone: '', date: '', time_slot: '', note: '' })
-  
+
   // logged-in patients don't have to type their name and phone again
   useEffect(() => {
     if (!user) return
@@ -40,14 +40,14 @@ export default function Appointments() {
           const d = (Array.isArray(docs) ? docs : []).find((x) => String(x.id) === String(doctorId))
           if (d && alive) {
             setCtx({
-  doctorName: d.name,
-  doctorDays: d.available_days || '',
-  doctorStart: (d.start_time || '').slice(0, 5),
-  doctorEnd: (d.end_time || '').slice(0, 5),
-  hospitalName: d.hospital_name || '',
-  hospitalId: d.hospital,
-  doctorWorkDays: d.work_days || null,
-})
+              doctorName: d.name,
+              doctorDays: d.available_days || '',
+              doctorStart: (d.start_time || '').slice(0, 5),
+              doctorEnd: (d.end_time || '').slice(0, 5),
+              hospitalName: d.hospital_name || '',
+              hospitalId: d.hospital,
+              doctorWorkDays: d.work_days || null,
+            })
             return
           }
         }
@@ -70,8 +70,8 @@ export default function Appointments() {
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
 
   const slots = SLOTS.filter((s) =>
-  (!ctx.doctorStart || s >= ctx.doctorStart) && (!ctx.doctorEnd || s < ctx.doctorEnd)
-)
+    (!ctx.doctorStart || s >= ctx.doctorStart) && (!ctx.doctorEnd || s < ctx.doctorEnd)
+  )
 
   // the date input gives "2026-10-24"; adding T00:00 reads it as local time, not UTC
   const pickedDay = form.date ? new Date(`${form.date}T00:00`).getDay() : null
@@ -102,7 +102,7 @@ export default function Appointments() {
 
       const r = await fetch('/api/appointments/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() },        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json', ...authHeaders() }, body: JSON.stringify(body),
       })
       if (!r.ok) {
         const data = await r.json().catch(() => ({}))
@@ -139,7 +139,7 @@ export default function Appointments() {
   return (
     <main className="page">
       <div className="wrap wrap--narrow">
-                <div className="page__head">
+        <div className="page__head">
           <p className="eyebrow"><Hexbrow />{t('appt.title')}</p>
           <h1 className="page__title">{t('appt.title')}</h1>
           {(ctx.doctorName || ctx.hospitalName) && (

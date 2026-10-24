@@ -19,10 +19,9 @@ export default function HospitalDetail() {
       .then((json) => {
         if (alive) { setRaw(json); setLoading(false) }
       })
-      .catch(() => {
-        if (alive) { setRaw(null); setLoading(false) }
+      .catch((status) => {
+        if (alive) { setRaw(null); setFailed(status !== 404); setLoading(false) }
       })
-    return () => { alive = false }
   }, [id])
 
   const hospital = raw ? normalizeHospital(raw) : null

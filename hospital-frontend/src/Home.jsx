@@ -238,10 +238,8 @@ export default function Home() {
         <div className="wrap foot__in">
           <span>{t('foot.copy')}</span>
           <nav aria-label="Footer">
-            <a href="#about">{t('foot.about')}</a>
-            <a href="#">{t('foot.privacy')}</a>
-            <a href="#">{t('foot.terms')}</a>
-            <a href="#contact">{t('foot.contact')}</a>
+            <Link to="/about">{t('foot.about')}</Link>
+            <a href="https://github.com/shreeya-12shrestha/hospital-app" target="_blank" rel="noreferrer">GitHub</a>
           </nav>
         </div>
       </footer>

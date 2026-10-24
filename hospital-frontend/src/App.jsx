@@ -13,6 +13,7 @@ import About from './About'
 import Login from './Login'
 import Register from './Register'
 import MyAppointments from './MyAppointments'
+import About from './About'
 function App() {
   return (
     <AppProvider>
@@ -29,6 +30,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/my-appointments" element={<MyAppointments />} />
+        <Route path="/about" element={<About />} />
       </Routes>
       <ChatWidget />
     </AppProvider>

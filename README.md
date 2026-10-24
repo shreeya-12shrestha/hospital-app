@@ -13,7 +13,7 @@ A bilingual (English / नेपाली) hospital finder and AI health assista
 
 **Find hospitals.** Search by name or address, filter by city, and sort by rating or free beds. Each hospital page shows its services, doctors, and live bed availability.
 
-**Book appointments.** The time picker only offers slots within the doctor's working hours. The backend validates every booking: no past dates, valid phone numbers, no double booking, and no slots outside the doctor's hours.
+**Book appointments.** The time picker only offers slots within the doctor's working hours. The backend validates every booking: no past dates, valid phone numbers, no double booking, and no slots outside the doctor's working days and hours.
 
 **Patient accounts.** Patients sign up with their mobile number and a password. When logged in, the booking form fills in their name and phone, and every booking is saved to their account under "My appointments". Guests can still book without an account. Django hashes the passwords and checks them against its password rules, and the API uses token authentication.
 
@@ -147,7 +147,6 @@ hospital-app/
 
 - The disease model is trained on the full dataset and has no held-out evaluation yet. Next step: a train/test split with accuracy and per-class metrics.
 - The training data is a small public dataset, so predictions are not clinically validated.
-- Doctor working hours are validated, but working days are still stored as free text.
 - Health records are intentionally not built yet. They need stronger protection (encryption, access controls, audit logs) than this prototype has.
 - The login token is kept in the browser's localStorage, which is fine for a prototype. A production app would use secure, HTTP-only cookies.
 - Spoken replies depend on the voices installed in the browser. Nepali written in Roman letters is read with an English voice.

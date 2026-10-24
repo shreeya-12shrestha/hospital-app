@@ -2900,3 +2900,49 @@ html[lang="ne"] .hero h1 {
     font-size: 13px;
     color: var(--red)
 }
+
+
+/* ---- about page ---- */
+
+.about {
+    display: grid;
+    gap: 14px;
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg)
+}
+
+.about h2 {
+    margin: 12px 0 0;
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--ink)
+}
+
+.about h2:first-child {
+    margin-top: 0
+}
+
+.about p,
+.about li {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6
+}
+
+.about ul {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding-left: 20px
+}
+
+.about .btn {
+    justify-self: start;
+    margin-top: 8px
+}
+
+.about__note {
+    font-size: 13px
+}

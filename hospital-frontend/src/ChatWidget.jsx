@@ -20,7 +20,7 @@ function pickVoice(prefixes) {
 
 export default function ChatWidget() {
   const { t, lang } = useApp()
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [msgs, setMsgs] = useState([])          // [{ me: bool, text: string }]
   const [draft, setDraft] = useState('')
   const [listening, setListening] = useState(false)

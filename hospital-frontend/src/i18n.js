@@ -229,7 +229,7 @@ export const STR = {
         "chat.note": "This assistant gives general information only. It is not a medical diagnosis — please consult a doctor.",
 
         "chat.voicehint": "Tap the mic — it understands Nepali and English.",
-        "chat.demo": "This is a design mockup, so there's no live model behind it yet. Once /api/chat/ is connected, the reply lands here.",
+        "chat.error": "Sorry, I couldn't reach the assistant right now. Please try again in a moment.",
         "voice.listening": "Listening…",
         "voice.unsupported": "Voice input needs Chrome or Edge.",
         "a11y.mic": "Start voice input",
@@ -473,7 +473,7 @@ export const STR = {
         "chat.note": "यो सहायकले सामान्य जानकारी मात्र दिन्छ। यो चिकित्सकीय निदान होइन — कृपया डाक्टरसँग सल्लाह लिनुहोस्।",
 
         "chat.voicehint": "माइक थिच्नुहोस् — यसले नेपाली र अङ्ग्रेजी दुवै बुझ्छ।",
-        "chat.demo": "यो डिजाइन नमुना हो, अहिले पछाडि कुनै मोडेल छैन। /api/chat/ जोडिएपछि जवाफ यहीँ देखिन्छ।",
+        "chat.error": "माफ गर्नुहोस्, अहिले सहायकसँग जोडिन सकिएन। केही बेरपछि फेरि प्रयास गर्नुहोस्।",
         "voice.listening": "सुन्दै छु…",
         "voice.unsupported": "भ्वाइस इनपुटका लागि Chrome वा Edge चाहिन्छ।",
         "a11y.mic": "बोलेर लेख्न सुरु गर्नुहोस्",

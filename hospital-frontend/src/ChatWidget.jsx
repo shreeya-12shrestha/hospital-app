@@ -31,7 +31,7 @@ export default function ChatWidget() {
   const inputRef = useRef(null)
   const recRef = useRef(null)
   const transcriptRef = useRef('')               // latest words heard by the mic
-  const sendRef = useRef(null)                   // always points at the newest send()                
+  const sendRef = useRef(null)                   // always points at the newest send()
   const langRef = useRef(lang)
   langRef.current = lang                         // recognition reads this at start time
 
@@ -58,7 +58,8 @@ export default function ChatWidget() {
       const heard = transcriptRef.current.trim()
       transcriptRef.current = ''
       if (heard) sendRef.current?.(heard)          // finished speaking → send it
-    }; rec.onerror = () => setListening(false)
+    }
+    rec.onerror = () => setListening(false)
     recRef.current = rec
     return () => { try { rec.abort() } catch { /* already stopped */ } }
   }, [])
@@ -108,11 +109,11 @@ export default function ChatWidget() {
         body: JSON.stringify({ message: text, lang, history: msgs.slice(-10) }),
       })
       const data = await r.json()
-      const reply = data.reply ?? data.response ?? data.message ?? t('chat.demo')
+      const reply = data.reply ?? data.response ?? data.message ?? t('chat.error')
       setMsgs((m) => [...m, { me: false, text: reply }])
       speak(reply, replyIdx)
     } catch {
-      setMsgs((m) => [...m, { me: false, text: t('chat.demo') }])
+      setMsgs((m) => [...m, { me: false, text: t('chat.error') }])
     } finally {
       setBusy(false)
     }

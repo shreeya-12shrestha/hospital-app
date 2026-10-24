@@ -10,6 +10,7 @@ export default function HospitalDetail() {
   const { id } = useParams()
   const [raw, setRaw] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [failed, setFailed] = useState(false)    // true = server problem, false = really not found
 
   useEffect(() => {
     let alive = true
@@ -35,8 +36,7 @@ export default function HospitalDetail() {
       <main className="page">
         <div className="wrap">
           <Link className="det__back" to="/hospitals"><Icon n="left" /> {t('det.back')}</Link>
-          <div className="empty"><p>{t('det.notfound')}</p></div>
-        </div>
+          <div className="empty"><p>{t(failed ? 'det.failed' : 'det.notfound')}</p></div>        </div>
       </main>
     )
   }

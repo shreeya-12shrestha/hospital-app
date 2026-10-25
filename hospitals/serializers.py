@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Hospital, Service, Doctor, Appointment
 from django.contrib.auth import password_validation
 from django.contrib.auth.models import User
-
+from .otp import check_code
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
@@ -96,6 +96,7 @@ class RegisterSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     phone = serializers.CharField(max_length=20)
     password = serializers.CharField(write_only=True)
+    code = serializers.CharField(write_only=True, max_length=6)
 
     def validate_phone(self, value):
         phone = clean_phone(value)
@@ -108,7 +109,11 @@ class RegisterSerializer(serializers.Serializer):
     def validate_password(self, value):
         password_validation.validate_password(value)
         return value
-
+    def validate(self, data):
+        error = check_code(data['phone'], data['code'])
+        if error:
+            raise serializers.ValidationError({'code': error})
+        return data
     def create(self, data):
         return User.objects.create_user(
             username=data['phone'], password=data['password'], first_name=data['name'],

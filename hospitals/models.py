@@ -66,3 +66,13 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.patient_name} @ {self.hospital.name} on {self.date}"
+
+
+class PhoneOTP(models.Model):
+    phone = models.CharField(max_length=10, db_index=True)
+    code_hash = models.CharField(max_length=128)      # hashed like a password, never the plain code
+    created_at = models.DateTimeField(auto_now_add=True)
+    attempts = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return f"OTP for {self.phone} at {self.created_at:%H:%M}"

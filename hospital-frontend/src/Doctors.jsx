@@ -4,13 +4,6 @@ import { useApp } from './AppContext'
 import { Icon } from './Icons'
 import { Hexbrow } from './Lib'
 
-const DEMO = [
-  { id: 'd1', name: 'Anjana Sharma', specKey: 'det.svc2', hospKey: 'h3.name', days: 'Sun–Fri' },
-  { id: 'd2', name: 'Bibek Thapa', specKey: 'det.svc1', hospKey: 'h1.name', days: 'Sun–Thu' },
-  { id: 'd3', name: 'Sunita Gurung', specKey: 'det.svc4', hospKey: 'h5.name', days: 'Mon–Sat' },
-  { id: 'd4', name: 'Rajan Adhikari', specKey: 'det.svc3', hospKey: 'h4.name', days: 'Sun–Fri' },
-]
-
 function initials(name) {
   return name.replace(/^Dr\.?\s*/, '').split(' ').map((w) => w[0]).slice(0, 2).join('')
 }
@@ -34,25 +27,13 @@ export default function Doctors() {
     return () => { alive = false }
   }, [])
 
-  const doctors = useMemo(() => {
-    if (raw && raw.length) {
-      return raw.map((d) => ({
-        id: d.id,
-        name: d.name,
-        specialty: d.specialty ?? '',
-        hospital: d.hospital_name ?? '',
-        days: d.available_days ?? '',
-      }))
-    }
-    return DEMO.map((d) => ({
-      id: d.id,
-      name: d.name,
-      specialty: t(d.specKey),
-      hospital: t(d.hospKey),
-      days: d.days,
-    }))
-  }, [raw, t])
-
+  const doctors = useMemo(() => (raw ?? []).map((d) => ({
+    id: d.id,
+    name: d.name,
+    specialty: d.specialty ?? '',
+    hospital: d.hospital_name ?? '',
+    days: d.available_days ?? '',
+  })), [raw])
   const specs = useMemo(
     () => [...new Set(doctors.map((d) => d.specialty).filter(Boolean))].sort(),
     [doctors],

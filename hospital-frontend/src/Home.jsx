@@ -23,23 +23,11 @@ export default function Home() {
         const list = Array.isArray(data) ? data : data.results ?? []
         if (alive) setHospitals(list)
       })
-      .catch(() => alive && setHospitals([]))   // API down → fall back to the demo cards
+      .catch(() => alive && setHospitals([]))   // API down → the promoted section stays hidden
     return () => { alive = false }
   }, [])
 
-  // Until the DB has rows, show the five designed placeholder cards.
-  const demo = [1, 2, 3, 4, 5].map((n) => ({
-    id: `demo-${n}`,
-    name: t(`h${n}.name`),
-    location: t(`h${n}.loc`),
-    rating: ['4.8', '4.6', '4.7', '4.5', '4.4'][n - 1],
-    reviews: ['312', '198', '864', '1,204', '503'][n - 1],
-    tag: t(n === 4 ? 'tag.gov' : n === 5 ? 'tag.cardio' : 'tag.multi'),
-    gov: n === 4,
-    demo: true,
-  }))
-
-  const cards = hospitals && hospitals.length ? hospitals : demo
+  const cards = hospitals ?? []
 
   const scrollRail = (dir) => {
     const rail = railRef.current
@@ -50,62 +38,62 @@ export default function Home() {
   return (
     <main id="top">
       {/* ============================ PROMOTED HOSPITALS ============================ */}
-      <section className="promo" id="hospitals">
-        <div className="wrap">
-          <div className="promo__head">
-            <div>
-              <p className="eyebrow"><Pennant />{t('promo.eyebrow')}</p>
-              <h2 className="h2">{t('promo.title')}</h2>
-              <p className="lede">{t('promo.sub')}</p>
-            </div>
-            <Link className="promo__viewall" to="/hospitals">
-              {t('promo.viewall')} <Icon n="arrow" />
-            </Link>
-          </div>
-
-          <div className="rail-shell">
-            <div className="rail-nav">
-              <button className="rail-btn" aria-label={t('a11y.prev')} onClick={() => scrollRail(-1)}>
-                <Icon n="left" />
-              </button>
-              <button className="rail-btn" aria-label={t('a11y.next')} onClick={() => scrollRail(1)}>
-                <Icon n="right" />
-              </button>
+      {cards.length > 0 && (
+        <section className="promo" id="hospitals">
+          <div className="wrap">
+            <div className="promo__head">
+              <div>
+                <p className="eyebrow"><Pennant />{t('promo.eyebrow')}</p>
+                <h2 className="h2">{t('promo.title')}</h2>
+                <p className="lede">{t('promo.sub')}</p>
+              </div>
+              <Link className="promo__viewall" to="/hospitals">
+                {t('promo.viewall')} <Icon n="arrow" />
+              </Link>
             </div>
 
-            <div className="rail" ref={railRef} tabIndex={0} aria-label={t('promo.title')}>
-              {cards.map((h, i) => (
-                <article className="hosp" key={h.id ?? i}>
-                  <div className="hosp__media"><HospitalArt i={i} /></div>
-                  <span className="hosp__badge">{t('promo.badge')}</span>
-                  <div className="hosp__body">
-                    <h3 className="hosp__name">{h.name}</h3>
-                    <p className="hosp__loc">
-                      <Icon n="pin" />
-                      <span>{h.location ?? h.address ?? ''}</span>
-                    </p>
-                    <div className="hosp__foot">
-                      <span className="rate">
-                        <Icon n="star" />
-                        <b>{h.rating ?? '—'}</b>
-                        {h.reviews ? <span>({h.reviews})</span> : null}
-                      </span>
-                      <span className={`tag${h.gov ? ' tag--gov' : ''}`}>
-                        {h.tag ?? h.specialty ?? (h.beds ? `${h.beds} beds` : t('tag.multi'))}
-                      </span>
-                    </div>
-                    {!h.demo && (
+            <div className="rail-shell">
+              <div className="rail-nav">
+                <button className="rail-btn" aria-label={t('a11y.prev')} onClick={() => scrollRail(-1)}>
+                  <Icon n="left" />
+                </button>
+                <button className="rail-btn" aria-label={t('a11y.next')} onClick={() => scrollRail(1)}>
+                  <Icon n="right" />
+                </button>
+              </div>
+
+              <div className="rail" ref={railRef} tabIndex={0} aria-label={t('promo.title')}>
+                {cards.map((h, i) => (
+                  <article className="hosp" key={h.id ?? i}>
+                    <div className="hosp__media"><HospitalArt i={i} /></div>
+                    <span className="hosp__badge">{t('promo.badge')}</span>
+                    <div className="hosp__body">
+                      <h3 className="hosp__name">{h.name}</h3>
+                      <p className="hosp__loc">
+                        <Icon n="pin" />
+                        <span>{h.location ?? h.address ?? ''}</span>
+                      </p>
+                      <div className="hosp__foot">
+                        <span className="rate">
+                          <Icon n="star" />
+                          <b>{h.rating ?? '—'}</b>
+                          {h.reviews ? <span>({h.reviews})</span> : null}
+                        </span>
+                        <span className={`tag${h.gov ? ' tag--gov' : ''}`}>
+                          {h.tag ?? h.specialty ?? (h.beds ? `${h.beds} beds` : t('tag.multi'))}
+                        </span>
+                      </div>
                       <Link className="hosp__link" to={`/hospitals/${h.id}`}>
                         {t('promo.viewall')} <Icon n="arrow" />
                       </Link>
-                    )}
-                  </div>
-                </article>
-              ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ==================================== HERO ==================================== */}
       <section className="hero">
@@ -118,9 +106,9 @@ export default function Home() {
               <Link className="btn btn--red" to="/symptom-check">
                 <Icon n="steth" /> {t('hero.cta1')}
               </Link>
-              <a className="btn btn--ghost" href="#hospitals">
+              <Link className="btn btn--ghost" to="/hospitals">
                 <Icon n="hospital" /> {t('hero.cta2')}
-              </a>
+              </Link>
             </div>
             <p className="hero__note"><Icon n="check" /> {t('hero.note')}</p>
           </div>

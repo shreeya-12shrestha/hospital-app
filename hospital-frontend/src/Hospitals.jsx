@@ -5,22 +5,6 @@ import { Icon } from './Icons'
 import { HospitalArt } from './Art'
 import { useHospitals, normalizeHospital, Hexbrow } from './Lib'
 
-// When the API has no rows yet, fall back to the five designed demo hospitals
-// so the page never looks broken while the backend is still being filled.
-function demoHospitals(t) {
-  return [1, 2, 3, 4, 5].map((n) => ({
-    id: `demo-${n}`,
-    name: t(`h${n}.name`),
-    location: t(`h${n}.loc`),
-    city: t(`h${n}.loc`).split(',').pop().trim(),
-    rating: [4.8, 4.6, 4.7, 4.5, 4.4][n - 1],
-    reviews: ['312', '198', '864', '1,204', '503'][n - 1],
-    specialty: t(n === 4 ? 'tag.gov' : n === 5 ? 'tag.cardio' : 'tag.multi'),
-    gov: n === 4,
-    demo: true,
-  }))
-}
-
 export default function Hospitals() {
   const { t } = useApp()
   const { data, loading } = useHospitals()
@@ -31,9 +15,9 @@ export default function Hospitals() {
   const [sort, setSort] = useState('rating')
 
   const list = useMemo(() => {
-    const source = data && data.length ? data.map(normalizeHospital) : demoHospitals(t)
-    return source
-  }, [data, t])
+    const source = (data ?? []).map(normalizeHospital) 
+     return source
+  }, [data])
 
   // Build filter dropdowns from whatever the data actually contains.
   const cities = useMemo(

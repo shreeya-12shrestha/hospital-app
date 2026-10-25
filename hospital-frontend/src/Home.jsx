@@ -190,9 +190,9 @@ export default function Home() {
       <section className="stats section--tight" id="doctors">
         <div className="wrap stats__grid">
           {[
-            ['hospital', 'stat.1n', 'stat.1a'],
-            ['users', 'stat.2n', 'stat.2a'],
-            ['heart', 'stat.3n', 'stat.3a'],
+            ['steth', 'stat.1n', 'stat.1a'],
+            ['spark', 'stat.2n', 'stat.2a'],
+            ['chat', 'stat.3n', 'stat.3a'],
             ['clock', 'stat.4n', 'stat.4a'],
           ].map(([icon, n, label]) => (
             <div className="stat" key={n}>

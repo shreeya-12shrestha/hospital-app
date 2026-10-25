@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import User
+from .otp import issue_code
 import os
 import json
 from dotenv import load_dotenv
@@ -92,6 +94,17 @@ class MyAppointmentsView(generics.ListAPIView):
 def account_payload(user, token):
     return {'token': token.key, 'user': {'name': user.first_name, 'phone': user.username}}
 
+@api_view(['POST'])
+def send_otp(request):
+    phone = clean_phone(request.data.get('phone', ''))
+    if len(phone) != 10 or not phone.startswith('9'):
+        return Response({'error': 'Enter a 10-digit mobile number, e.g. 98XXXXXXXX.'}, status=400)
+    if User.objects.filter(username=phone).exists():
+        return Response({'error': 'An account with this phone number already exists.'}, status=400)
+    wait = issue_code(phone)
+    if wait:
+        return Response({'error': f'Please wait {wait} seconds before asking for a new code.'}, status=429)
+    return Response({'detail': 'Code sent.'})
 
 @api_view(['POST'])
 def register(request):

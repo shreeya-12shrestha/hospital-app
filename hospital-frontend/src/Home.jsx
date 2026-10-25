@@ -172,8 +172,7 @@ export default function Home() {
               ['steth', 'svc.1a', 'svc.1b', '/symptom-check'],
               ['hospital', 'svc.2a', 'svc.2b', '/hospitals'],
               ['cal', 'svc.3a', 'svc.3b', '/appointments'],
-              ['file', 'svc.4a', 'svc.4b', '/records'],
-            ].map(([icon, a, b, to]) => (
+              ['file', 'svc.4a', 'svc.4b', '/my-appointments'],            ].map(([icon, a, b, to]) => (
               <Link className="svc-card" to={to} key={a}>
                 <i><Icon n={icon} /></i>
                 <div>

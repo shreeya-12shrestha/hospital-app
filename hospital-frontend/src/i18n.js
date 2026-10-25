@@ -194,8 +194,8 @@ export const STR = {
         "svc.2b": "Search by city, specialty, or bed availability — updated daily.",
         "svc.3a": "Book Appointment",
         "svc.3b": "Choose a doctor and a time slot. You'll get a confirmation right away.",
-        "svc.4a": "Health Records",
-        "svc.4b": "Keep reports, prescriptions, and past visits together in one place.",
+        "svc.4a": "My Appointments",
+        "svc.4b": "See every appointment you've booked, past and upcoming, in one place.",
 
         "stat.1n": "500+",
         "stat.1a": "Hospitals",
@@ -439,9 +439,9 @@ export const STR = {
         "svc.2b": "सहर, विशेषज्ञता वा बेड उपलब्धताअनुसार खोज्नुहोस् — दैनिक अद्यावधिक।",
         "svc.3a": "अपोइन्टमेन्ट बुक",
         "svc.3b": "डाक्टर र समय छान्नुहोस्। तुरुन्तै पुष्टि प्राप्त हुन्छ।",
-        "svc.4a": "स्वास्थ्य अभिलेख",
-        "svc.4b": "रिपोर्ट, प्रेस्क्रिप्सन र विगतका भेटघाट एकै ठाउँमा राख्नुहोस्।",
 
+        "svc.4a": "मेरा अपोइन्टमेन्ट",
+        "svc.4b": "बितेका र आउने सबै अपोइन्टमेन्ट एकै ठाउँमा हेर्नुहोस्।",
         "stat.1n": "५००+",
         "stat.1a": "अस्पताल",
         "stat.2n": "२०००+",

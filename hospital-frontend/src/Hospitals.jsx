@@ -112,11 +112,9 @@ export default function Hospitals() {
                       {h.specialty ?? t('tag.multi')}
                     </span>
                   </div>
-                  {!h.demo && (
-                    <Link className="hosp__link" to={`/hospitals/${h.id}`}>
-                      {t('hosp.view')} <Icon n="arrow" />
-                    </Link>
-                  )}
+                                    <Link className="hosp__link" to={`/hospitals/${h.id}`}>
+                    {t('hosp.view')} <Icon n="arrow" />
+                  </Link>
                 </div>
               </article>
             ))}

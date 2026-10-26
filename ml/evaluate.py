@@ -1,8 +1,7 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-# 1. Load the same data the model was trained on
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from sklearn.metrics import accuracy_score# 1. Load the same data the model was trained on
 data = pd.read_csv('Training.csv')
 data = data.loc[:, ~data.columns.str.contains('^Unnamed')]
 
@@ -28,3 +27,20 @@ print('\nNaive split accuracy:', accuracy_score(y_test, model.predict(X_test)))
 seen = set(map(tuple, X_train.values))
 leaked = sum(tuple(row) in seen for row in X_test.values)
 print('Test rows that also appear in training:', leaked, 'of', len(X_test))
+
+
+# 3. The honest way: remove the copies first, so a test row can't hide in training
+unique = data.drop_duplicates()
+Xu = unique.drop(columns=['prognosis'])
+yu = unique['prognosis']
+
+Xu_train, Xu_test, yu_train, yu_test = train_test_split(
+    Xu, yu, test_size=0.25, random_state=42, stratify=yu)
+model = RandomForestClassifier(random_state=42).fit(Xu_train, yu_train)
+print('\nUnique rows only, accuracy:', accuracy_score(yu_test, model.predict(Xu_test)),
+      f'({len(Xu_test)} test rows)')
+
+# 5-fold cross-validation: test on 5 different slices and average them
+folds = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+scores = cross_val_score(RandomForestClassifier(random_state=42), Xu, yu, cv=folds)
+print('5-fold scores:', scores.round(3), '| average:', round(scores.mean(), 3))

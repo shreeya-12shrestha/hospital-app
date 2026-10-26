@@ -2946,3 +2946,15 @@ html[lang="ne"] .hero h1 {
 .about__note {
     font-size: 13px
 }
+
+
+/* ---- phone verification ---- */
+
+.otp-send {
+    justify-self: start
+}
+
+.otp-note {
+    font-size: 13px;
+    color: var(--muted)
+}

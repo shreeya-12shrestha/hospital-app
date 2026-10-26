@@ -30,6 +30,7 @@ export default function Nav() {
     { to: '/hospitals', label: t('nav.hospitals') },
     { to: '/symptom-check', label: t('nav.symptoms') },
     { to: '/doctors', label: t('nav.doctors') },
+    { to: '/ambulance', label: t('nav.ambulance') },
     { to: '/about', label: t('nav.about') },
   ]
 

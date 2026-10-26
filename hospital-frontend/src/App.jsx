@@ -10,6 +10,7 @@ import Doctors from './Doctors'
 import ChatWidget from './ChatWidget'
 import Appointments from './Appointments'
 import About from './About'
+import Ambulance from './Ambulance'
 import Login from './Login'
 import Register from './Register'
 import MyAppointments from './MyAppointments'
@@ -27,6 +28,7 @@ function App() {
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/about" element={<About />} />
+        <Route path="/ambulance" element={<Ambulance />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/my-appointments" element={<MyAppointments />} />

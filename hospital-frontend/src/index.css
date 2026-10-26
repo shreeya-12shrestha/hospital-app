@@ -2958,3 +2958,57 @@ html[lang="ne"] .hero h1 {
     font-size: 13px;
     color: var(--muted)
 }
+
+
+/* ---- ambulance finder ---- */
+
+.sos {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    color: var(--red);
+    background: var(--red-tint);
+    border: 1px solid var(--red);
+    border-radius: var(--r-lg);
+    text-decoration: none
+}
+
+.sos svg {
+    width: 22px;
+    height: 22px;
+    flex: none
+}
+
+.amb-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px
+}
+
+.amb-map {
+    height: 340px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg)
+}
+
+.amb-map .leaflet-container {
+    height: 100%;
+    width: 100%
+}
+
+.amb {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px
+}
+
+.amb__call {
+    flex: none;
+    padding: 10px 20px
+}

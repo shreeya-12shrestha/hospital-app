@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.urls import path
 from hospitals.views import HospitalListView, DoctorListView ,HospitalDetailView, AppointmentCreateView, symptom_check, chat
 from hospitals.views import MyAppointmentsView, register, login, logout, me , send_otp
+from hospitals.views import nearby_ambulances
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/hospitals/', HospitalListView.as_view()),
@@ -13,6 +15,7 @@ urlpatterns = [
     path('api/doctors/', DoctorListView.as_view()),
     path('api/my-appointments/', MyAppointmentsView.as_view()),
     path('api/send-otp/', send_otp),
+    path('api/ambulances/nearby/', nearby_ambulances),
     path('api/register/', register),
     path('api/login/', login),
     path('api/logout/', logout),

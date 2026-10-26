@@ -16,6 +16,7 @@ import joblib
 import pandas as pd
 from google.genai import types
 from .models import Hospital, Service, Doctor, Appointment
+from math import asin, cos, radians, sin, sqrt
 from .serializers import HospitalSerializer, HospitalDetailSerializer, AppointmentSerializer, DoctorSerializer
 from .serializers import RegisterSerializer, clean_phone
 load_dotenv()
@@ -267,3 +268,35 @@ def chat(request):
             {'error': 'AI service is temporarily unavailable. Please try again.'},
             status=503,
         )
+
+
+# --- Ambulances near the patient ---
+
+def distance_km(lat1, lng1, lat2, lng2):
+    # Haversine formula: distance between two points on the Earth's surface
+    lat1, lng1, lat2, lng2 = map(radians, (lat1, lng1, lat2, lng2))
+    a = sin((lat2 - lat1) / 2) ** 2 + cos(lat1) * cos(lat2) * sin((lng2 - lng1) / 2) ** 2
+    return 2 * 6371 * asin(sqrt(a))           # 6371 km = Earth's radius
+
+
+@api_view(['GET'])
+def nearby_ambulances(request):
+    try:
+        lat = float(request.query_params['lat'])
+        lng = float(request.query_params['lng'])
+    except (KeyError, ValueError):
+        return Response({'error': 'Send your location as ?lat=...&lng=...'}, status=400)
+
+    results = []
+    for amb in Ambulance.objects.filter(is_available=True).select_related('hospital'):
+        results.append({
+            'id': amb.id,
+            'name': amb.name,
+            'hospital': amb.hospital.name if amb.hospital else '',
+            'phone': amb.phone,
+            'latitude': float(amb.latitude),
+            'longitude': float(amb.longitude),
+            'distance_km': round(distance_km(lat, lng, float(amb.latitude), float(amb.longitude)), 1),
+        })
+    results.sort(key=lambda r: r['distance_km'])
+    return Response(results[:10])

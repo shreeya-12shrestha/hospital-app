@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import Hospital, Service, Doctor, Appointment
-
-
+from .models import Hospital, Service, Doctor, Appointment, Ambulance
 @admin.register(Hospital)
 class HospitalAdmin(admin.ModelAdmin):
     list_display = ('name', 'city', 'rating', 'available_beds', 'is_promoted')
@@ -28,3 +26,10 @@ class AppointmentAdmin(admin.ModelAdmin):
     list_display = ('patient_name', 'hospital', 'doctor', 'date', 'time_slot', 'created_at')
     list_filter = ('date', 'hospital')
     search_fields = ('patient_name', 'phone')
+
+    
+
+@admin.register(Ambulance)
+class AmbulanceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'hospital', 'phone', 'is_available')
+    list_editable = ('is_available',)

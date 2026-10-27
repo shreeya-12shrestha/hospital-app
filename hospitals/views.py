@@ -158,13 +158,18 @@ def symptom_check(request):
     else:
         chosen, gemini_reply = extract_symptoms_with_gemini(raw, lang)
 
-    prediction = None
+        prediction = None
+    possible = []
     matched = [s for s in chosen if s in symptom_list]
     if matched:
         row = [1 if s in matched else 0 for s in symptom_list]
         input_df = pd.DataFrame([row], columns=symptom_list)
         prediction = model.predict(input_df)[0]
-
+        # the 3 most likely conditions, with how sure the model is about each
+        chances = model.predict_proba(input_df)[0]
+        best = chances.argsort()[::-1][:3]
+        possible = [{'name': str(model.classes_[i]), 'chance': round(float(chances[i]) * 100)}
+                    for i in best if chances[i] > 0]
     disclaimer = (
         'यो निदान होइन — जानकारीमूलक सुझाव मात्र हो। कृपया योग्य डाक्टरलाई भेट्नुहोस्।'
         if lang == 'ne' else
@@ -174,7 +179,8 @@ def symptom_check(request):
     return Response({
         'result': gemini_reply,          # human-readable text, in the user's language
         'prediction': prediction,        # disease label from the Random Forest (or null)
-        'matched_symptoms': matched,     # which known symptoms we recognized
+        'matched_symptoms': matched,    
+         'possible': possible,            # top 3 conditions with a percentage each # which known symptoms we recognized
         'disclaimer': disclaimer,
     })
 

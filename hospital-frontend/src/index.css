@@ -3012,3 +3012,41 @@ html[lang="ne"] .hero h1 {
     flex: none;
     padding: 10px 20px
 }
+
+
+/* ---- symptom checker: top possibilities ---- */
+
+.sym__possible {
+    display: grid;
+    gap: 10px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none
+}
+
+.sym__possible li {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) 2fr 48px;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink)
+}
+
+.sym__bar {
+    height: 8px;
+    background: var(--line);
+    border-radius: 100px;
+    overflow: hidden
+}
+
+.sym__bar i {
+    display: block;
+    height: 100%;
+    background: var(--blue);
+    border-radius: 100px
+}
+
+.sym__possible b {
+    text-align: right
+}

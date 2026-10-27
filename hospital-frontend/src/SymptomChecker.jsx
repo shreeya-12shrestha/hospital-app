@@ -59,11 +59,12 @@ export default function SymptomChecker() {
       })
       const data = await r.json()
       setResult({
-        summary: data.result ?? data.reply ?? data.response ?? data.prediction ?? t('chat.demo'),
+        summary: data.result ?? data.reply ?? data.response ?? data.prediction ?? t('chat.error'),
         note: t('sym.resultNote'),
+        possible: data.possible ?? [],
       })
     } catch {
-      setResult({ summary: t('chat.demo'), note: t('sym.resultNote') })
+      setResult({ summary: t('chat.error'), note: t('sym.resultNote'), possible: [] })
     } finally {
       setBusy(false)
     }
@@ -129,6 +130,17 @@ export default function SymptomChecker() {
           <div className="sym__result">
             <p className="eyebrow"><Hexbrow blue />{t('sym.result')}</p>
             <div className="sym__result-body">{result.summary}</div>
+            {result.possible.length > 0 && (
+              <ul className="sym__possible">
+                {result.possible.map((p) => (
+                  <li key={p.name}>
+                    <span>{p.name}</span>
+                    <span className="sym__bar"><i style={{ width: `${p.chance}%` }} /></span>
+                    <b>{p.chance}%</b>
+                  </li>
+                ))}
+              </ul>
+            )}
             <p className="sym__result-note">{result.note}</p>
             <div className="sym__result-actions">
               <Link className="btn btn--red" to="/hospitals"><Icon n="hospital" /> {t('sym.findHosp')}</Link>

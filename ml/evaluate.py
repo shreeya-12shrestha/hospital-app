@@ -58,3 +58,39 @@ for k in [1, 2, 3, 4, 5]:
         row[keep] = 1                                # ...except k random ones
     acc = accuracy_score(yu_test, model.predict(pd.DataFrame(X_few, columns=X.columns)))
     print(f'  {k} symptom(s): {acc:.0%}')
+    
+# 5. Fix: also train on rows with only some symptoms, like real patients type them
+def partial_copies(X_part, y_part, copies=20, seed=1):
+    rng = np.random.default_rng(seed)
+    rows, labels = [], []
+    for row, label in zip(X_part.to_numpy(), y_part):
+        has = np.flatnonzero(row)
+        rows.append(row)                                 # keep the full row too
+        labels.append(label)
+        for _ in range(copies):
+            k = rng.integers(1, len(has) + 1)            # between 1 and all of the symptoms
+            keep = rng.choice(has, size=k, replace=False)
+            new = np.zeros_like(row)
+            new[keep] = 1
+            rows.append(new)
+            labels.append(label)
+    return pd.DataFrame(rows, columns=X_part.columns), labels
+
+
+X_aug, y_aug = partial_copies(Xu_train, yu_train)       # training rows only, never the test rows
+better = RandomForestClassifier(random_state=42).fit(X_aug, y_aug)
+
+print('\nOld model vs model trained on partial symptoms:')
+for k in [1, 2, 3, 5]:
+    rng = np.random.default_rng(0)
+    X_few = Xu_test.to_numpy(copy=True)
+    for row in X_few:
+        has = np.flatnonzero(row)
+        keep = rng.choice(has, size=min(k, len(has)), replace=False)
+        row[:] = 0
+        row[keep] = 1
+    X_few = pd.DataFrame(X_few, columns=X.columns)
+    old = accuracy_score(yu_test, model.predict(X_few))
+    new = accuracy_score(yu_test, better.predict(X_few))
+    print(f'  {k} symptom(s): old {old:.0%} -> new {new:.0%}')
+print('  all symptoms:', f"old {accuracy_score(yu_test, model.predict(Xu_test)):.0%} -> new {accuracy_score(yu_test, better.predict(Xu_test)):.0%}")

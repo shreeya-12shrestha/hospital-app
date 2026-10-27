@@ -179,8 +179,8 @@ def symptom_check(request):
     return Response({
         'result': gemini_reply,          # human-readable text, in the user's language
         'prediction': prediction,        # disease label from the Random Forest (or null)
-        'matched_symptoms': matched,    
-         'possible': possible,            # top 3 conditions with a percentage each # which known symptoms we recognized
+        'matched_symptoms': matched,     # which known symptoms we recognized
+        'possible': possible,            # top 3 conditions with a percentage each           # top 3 conditions with a percentage each # which known symptoms we recognized
         'disclaimer': disclaimer,
     })
 
